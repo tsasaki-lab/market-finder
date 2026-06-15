@@ -17,9 +17,9 @@
 <h3>サンプル結果</h3>
 
 <ul>
-    <li>結果1</li>
-    <li>結果2</li>
-    <li>結果3</li>
+    <li th:each="result : ${results}"
+        th:text="${result}">
+    </li>
 </ul>
 
 <a href="/">戻る</a>

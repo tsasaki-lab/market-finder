@@ -10,8 +10,11 @@
 
 <p>市場調査キーワードを入力してください</p>
 
-<form>
-    <input type="text" placeholder="例: spring boot">
+<form action="/search" method="get">
+    <input type="text"
+           name="keyword"
+           placeholder="例: spring boot">
+
     <button type="submit">検索</button>
 </form>
 

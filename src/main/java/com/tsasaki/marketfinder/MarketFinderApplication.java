@@ -1,0 +1,13 @@
+package com.tsasaki.marketfinder;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class MarketFinderApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MarketFinderApplication.class, args);
+    }
+
+}

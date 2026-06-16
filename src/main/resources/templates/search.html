@@ -17,8 +17,10 @@
 <h3>サンプル結果</h3>
 
 <ul>
-    <li th:each="result : ${results}"
-        th:text="${result}">
+    <li th:each="result : ${results}">
+        <a th:href="${result.url}" th:text="${result.fullName}" target="_blank"></a>
+        <span th:text="' ★ ' + ${result.stars}"></span>
+        <p th:text="${result.description}"></p>
     </li>
 </ul>
 

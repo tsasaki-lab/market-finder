@@ -1,12 +1,8 @@
 package com.tsasaki.marketfinder.service;
 
 import com.tsasaki.marketfinder.client.GitHubApiClient;
-import com.tsasaki.marketfinder.dto.GitHubRepositoryDto;
-import com.tsasaki.marketfinder.dto.SearchResponseDto;
-import com.tsasaki.marketfinder.dto.SearchSummaryDto;
+import com.tsasaki.marketfinder.dto.*;
 import org.springframework.stereotype.Service;
-import com.tsasaki.marketfinder.dto.GitHubIssueDto;
-import com.tsasaki.marketfinder.dto.IssueSummaryDto;
 
 import java.util.List;
 
@@ -18,15 +14,18 @@ public class SearchService {
     private final GitHubApiClient gitHubApiClient;
     private final SearchSummaryService searchSummaryService;
     private final IssueSummaryService issueSummaryService;
+    private final TrendAnalysisService trendAnalysisService;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
             SearchSummaryService searchSummaryService,
-            IssueSummaryService issueSummaryService
+            IssueSummaryService issueSummaryService,
+            TrendAnalysisService trendAnalysisService
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
         this.issueSummaryService = issueSummaryService;
+        this.trendAnalysisService = trendAnalysisService;
     }
 
     public SearchResponseDto search(String keyword, String language, String sort) {
@@ -39,8 +38,9 @@ public class SearchService {
                     List.of(),
                     null,
                     "検索キーワードを入力してください。",
-                    new SearchSummaryDto(0, 0.0, 0, 0),
-                    new IssueSummaryDto(0, 0, 0, 0)
+                    emptySearchSummary(),
+                    emptyIssueSummary(),
+                    emptyTrendAnalysis()
             );
         }
 
@@ -50,8 +50,9 @@ public class SearchService {
                     List.of(),
                     null,
                     "検索キーワードは50文字以内で入力してください。",
-                    new SearchSummaryDto(0, 0.0, 0, 0),
-                    new IssueSummaryDto(0, 0, 0, 0)
+                    emptySearchSummary(),
+                    emptyIssueSummary(),
+                    emptyTrendAnalysis()
             );
         }
 
@@ -68,13 +69,20 @@ public class SearchService {
 
             IssueSummaryDto issueSummary = issueSummaryService.summarize(issues);
 
+            TrendAnalysisDto trendAnalysis =
+                    trendAnalysisService.analyze(
+                            sortedResults,
+                            issues
+                    );
+
             return new SearchResponseDto(
                     sortedResults,
                     issues,
                     null,
                     null,
                     summary,
-                    issueSummary
+                    issueSummary,
+                    trendAnalysis
             );
         } catch (IllegalStateException e) {
             return new SearchResponseDto(
@@ -82,8 +90,9 @@ public class SearchService {
                     List.of(),
                     "検索中にエラーが発生しました。時間をおいて再度お試しください。",
                     null,
-                    new SearchSummaryDto(0, 0.0, 0, 0),
-                    new IssueSummaryDto(0, 0, 0, 0)
+                    emptySearchSummary(),
+                    emptyIssueSummary(),
+                    emptyTrendAnalysis()
             );
         }
     }
@@ -111,6 +120,18 @@ public class SearchService {
         }
 
         return results;
+    }
+
+    private SearchSummaryDto emptySearchSummary() {
+        return new SearchSummaryDto(0, 0.0, 0, 0);
+    }
+
+    private IssueSummaryDto emptyIssueSummary() {
+        return new IssueSummaryDto(0, 0, 0, 0);
+    }
+
+    private TrendAnalysisDto emptyTrendAnalysis() {
+        return new TrendAnalysisDto(0.0, 0, 0, 0, "N/A");
     }
 
 }

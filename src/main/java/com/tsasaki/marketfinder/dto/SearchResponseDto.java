@@ -8,6 +8,7 @@ public record SearchResponseDto(
         String errorMessage,
         String validationMessage,
         SearchSummaryDto summary,
-        IssueSummaryDto issueSummary
+        IssueSummaryDto issueSummary,
+        TrendAnalysisDto trendAnalysis
 ) {
 }

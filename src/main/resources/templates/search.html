@@ -218,6 +218,52 @@
 
     </div>
 
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h3>Trend Analysis</h3>
+
+            <p>
+                Trend Level:
+                <strong
+                        th:text="${trendAnalysis.trendLevel}">
+                </strong>
+            </p>
+
+            <p>
+                Average Market Score:
+                <span
+                        th:text="${#numbers.formatDecimal(
+                    trendAnalysis.averageMarketScore,
+                    1,
+                    1)}">
+            </span>
+            </p>
+
+            <p>
+                Average Stars:
+                <span
+                        th:text="${trendAnalysis.averageStars}">
+            </span>
+            </p>
+
+            <p>
+                Open Issues:
+                <span
+                        th:text="${trendAnalysis.openIssueCount}">
+            </span>
+            </p>
+
+            <p>
+                Recent Issues:
+                <span
+                        th:text="${trendAnalysis.recentlyUpdatedIssueCount}">
+            </span>
+            </p>
+
+        </div>
+    </div>
+
     <div th:if="${#lists.isEmpty(issues)}"
          class="alert alert-secondary">
         Issue検索結果がありません。

@@ -4,6 +4,7 @@ import com.tsasaki.marketfinder.dto.GitHubRepositoryDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import java.util.List;
 import java.util.Map;
@@ -22,29 +23,39 @@ public class GitHubApiClient {
     }
 
     public List<GitHubRepositoryDto> searchRepositories(String keyword) {
-        Map response = restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/search/repositories")
-                        .queryParam("q", keyword)
-                        .queryParam("sort", "stars")
-                        .queryParam("order", "desc")
-                        .queryParam("per_page", 5)
-                        .build())
-                .header("Authorization", "Bearer " + token)
-                .header("Accept", "application/vnd.github+json")
-                .retrieve()
-                .body(Map.class);
+        try {
+            Map response = restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/search/repositories")
+                            .queryParam("q", keyword)
+                            .queryParam("sort", "stars")
+                            .queryParam("order", "desc")
+                            .queryParam("per_page", 5)
+                            .build())
+                    .header("Authorization", "Bearer " + token)
+                    .header("Accept", "application/vnd.github+json")
+                    .retrieve()
+                    .body(Map.class);
 
-        List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
+            if (response == null || response.get("items") == null) {
+                return List.of();
+            }
 
-        return items.stream()
-                .map(item -> new GitHubRepositoryDto(
-                        (String) item.get("name"),
-                        (String) item.get("full_name"),
-                        (String) item.get("html_url"),
-                        (String) item.get("description"),
-                        (Integer) item.get("stargazers_count")
-                ))
-                .toList();
+            List<Map<String, Object>> items =
+                    (List<Map<String, Object>>) response.get("items");
+
+            return items.stream()
+                    .map(item -> new GitHubRepositoryDto(
+                            (String) item.get("name"),
+                            (String) item.get("full_name"),
+                            (String) item.get("html_url"),
+                            (String) item.get("description"),
+                            (Integer) item.get("stargazers_count")
+                    ))
+                    .toList();
+
+        } catch (RestClientException e) {
+            throw new IllegalStateException("GitHub APIの呼び出しに失敗しました。", e);
+        }
     }
 }

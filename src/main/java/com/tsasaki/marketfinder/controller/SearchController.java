@@ -1,5 +1,6 @@
 package com.tsasaki.marketfinder.controller;
 
+import com.tsasaki.marketfinder.dto.SearchResponseDto;
 import com.tsasaki.marketfinder.service.SearchService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +18,11 @@ public class SearchController {
     @GetMapping("/search")
     public String search(String keyword, Model model) {
 
-        model.addAttribute("keyword", keyword);
+        SearchResponseDto response = searchService.search(keyword);
 
-        model.addAttribute(
-                "results",
-                searchService.search(keyword)
-        );
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("results", response.results());
+        model.addAttribute("errorMessage", response.errorMessage());
 
         return "search";
     }

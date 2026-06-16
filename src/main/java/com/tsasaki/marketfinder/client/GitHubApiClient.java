@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import com.tsasaki.marketfinder.service.MarketScoreService;
 
 import java.util.List;
 import java.util.Map;
@@ -15,9 +16,14 @@ public class GitHubApiClient {
 
     private final RestClient restClient;
     private final String token;
+    private final MarketScoreService marketScoreService;
 
-    public GitHubApiClient(@Value("${github.api.token}") String token) {
+    public GitHubApiClient(
+            @Value("${github.api.token}") String token,
+            MarketScoreService marketScoreService
+    ) {
         this.token = token;
+        this.marketScoreService = marketScoreService;
         this.restClient = RestClient.builder()
                 .baseUrl("https://api.github.com")
                 .build();
@@ -50,15 +56,21 @@ public class GitHubApiClient {
                     (List<Map<String, Object>>) response.get("items");
 
             return items.stream()
-                    .map(item -> new GitHubRepositoryDto(
-                            (String) item.get("name"),
-                            (String) item.get("full_name"),
-                            (String) item.get("html_url"),
-                            (String) item.get("description"),
-                            (Integer) item.get("stargazers_count"),
-                            (String) item.get("language"),
-                            (String) item.get("updated_at")
-                    ))
+                    .map(item -> {
+                        int stars = (Integer) item.get("stargazers_count");
+                        String updatedAt = (String) item.get("updated_at");
+
+                        return new GitHubRepositoryDto(
+                                (String) item.get("name"),
+                                (String) item.get("full_name"),
+                                (String) item.get("html_url"),
+                                (String) item.get("description"),
+                                stars,
+                                (String) item.get("language"),
+                                updatedAt,
+                                marketScoreService.calculate(stars, updatedAt)
+                        );
+                    })
                     .toList();
 
         } catch (RestClientException e) {

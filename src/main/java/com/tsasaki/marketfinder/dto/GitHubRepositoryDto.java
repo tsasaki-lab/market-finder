@@ -7,6 +7,7 @@ public record GitHubRepositoryDto(
         String description,
         int stars,
         String language,
-        String updatedAt
+        String updatedAt,
+        int marketScore
 ) {
 }

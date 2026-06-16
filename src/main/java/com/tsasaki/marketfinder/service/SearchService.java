@@ -24,7 +24,7 @@ public class SearchService {
         this.searchSummaryService = searchSummaryService;
     }
 
-    public SearchResponseDto search(String keyword, String language) {
+    public SearchResponseDto search(String keyword, String language, String sort) {
         String normalizedKeyword = keyword == null ? "" : keyword.trim();
         String normalizedLanguage = language == null ? "" : language.trim();
 
@@ -50,9 +50,11 @@ public class SearchService {
             List<GitHubRepositoryDto> results =
                     gitHubApiClient.searchRepositories(normalizedKeyword, normalizedLanguage);
 
-            SearchSummaryDto summary = searchSummaryService.summarize(results);
+            List<GitHubRepositoryDto> sortedResults = sortResults(results, sort);
 
-            return new SearchResponseDto(results, null, null, summary);
+            SearchSummaryDto summary = searchSummaryService.summarize(sortedResults);
+
+            return new SearchResponseDto(sortedResults, null, null, summary);
 
         } catch (IllegalStateException e) {
             return new SearchResponseDto(
@@ -63,4 +65,30 @@ public class SearchService {
             );
         }
     }
+
+    private List<GitHubRepositoryDto> sortResults(
+            List<GitHubRepositoryDto> results,
+            String sort
+    ) {
+        if (sort == null || sort.isBlank() || sort.equals("stars")) {
+            return results.stream()
+                    .sorted((a, b) -> Integer.compare(b.stars(), a.stars()))
+                    .toList();
+        }
+
+        if (sort.equals("marketScore")) {
+            return results.stream()
+                    .sorted((a, b) -> Integer.compare(b.marketScore(), a.marketScore()))
+                    .toList();
+        }
+
+        if (sort.equals("updated")) {
+            return results.stream()
+                    .sorted((a, b) -> b.updatedAt().compareTo(a.updatedAt()))
+                    .toList();
+        }
+
+        return results;
+    }
+
 }

@@ -16,6 +16,14 @@
     言語:
     <strong th:text="${language == null || language.isBlank() ? '指定なし' : language}"></strong>
 </p>
+<p>
+    並び替え:
+    <strong th:switch="${sort}">
+        <span th:case="'marketScore'">Market Score順</span>
+        <span th:case="'updated'">更新日順</span>
+        <span th:case="*">Stars順</span>
+    </strong>
+</p>
 
 <a href="/">← トップへ戻る</a>
 

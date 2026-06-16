@@ -8,6 +8,37 @@
 
 <h1>Market Finder</h1>
 
+<form action="/search" method="get"
+      style="margin-bottom: 16px;">
+
+    <input type="text"
+           name="keyword"
+           th:value="${keyword}"
+           placeholder="例: spring boot"
+           required
+           maxlength="50"
+           style="width: 300px; padding: 8px;">
+
+    <select name="language" style="padding: 8px;">
+        <option value="" th:selected="${language == null || language.isBlank()}">指定なし</option>
+        <option value="Java" th:selected="${language == 'Java'}">Java</option>
+        <option value="JavaScript" th:selected="${language == 'JavaScript'}">JavaScript</option>
+        <option value="Python" th:selected="${language == 'Python'}">Python</option>
+        <option value="TypeScript" th:selected="${language == 'TypeScript'}">TypeScript</option>
+        <option value="Go" th:selected="${language == 'Go'}">Go</option>
+    </select>
+
+    <select name="sort" style="padding: 8px;">
+        <option value="stars" th:selected="${sort == null || sort.isBlank() || sort == 'stars'}">Stars順</option>
+        <option value="marketScore" th:selected="${sort == 'marketScore'}">Market Score順</option>
+        <option value="updated" th:selected="${sort == 'updated'}">更新日順</option>
+    </select>
+
+    <button type="submit" style="padding: 8px 16px;">
+        再検索
+    </button>
+</form>
+
 <p>
     検索キーワード:
     <strong th:text="${keyword}"></strong>

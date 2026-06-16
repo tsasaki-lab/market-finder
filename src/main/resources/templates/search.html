@@ -2,29 +2,50 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>検索結果</title>
+    <title>検索結果 - Market Finder</title>
 </head>
 <body>
 
-<h1>検索結果</h1>
+<h1>Market Finder</h1>
 
-<p>検索キーワード:</p>
+<p>
+    検索キーワード:
+    <strong th:text="${keyword}"></strong>
+</p>
 
-<h2 th:text="${keyword}"></h2>
+<a href="/">← トップへ戻る</a>
 
 <hr>
 
-<h3>サンプル結果</h3>
+<h2>GitHub検索結果</h2>
 
-<ul>
-    <li th:each="result : ${results}">
-        <a th:href="${result.url}" th:text="${result.fullName}" target="_blank"></a>
-        <span th:text="' ★ ' + ${result.stars}"></span>
-        <p th:text="${result.description}"></p>
-    </li>
-</ul>
+<div th:if="${#lists.isEmpty(results)}">
+    <p>検索結果がありません。</p>
+</div>
 
-<a href="/">戻る</a>
+<div th:each="result : ${results}"
+     style="border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px;">
+
+    <h3>
+        <a th:href="${result.url}"
+           th:text="${result.fullName}"
+           target="_blank">
+        </a>
+    </h3>
+
+    <p th:text="${result.description}">
+        description
+    </p>
+
+    <p>
+        ⭐ Stars:
+        <span th:text="${result.stars}"></span>
+    </p>
+
+    <a th:href="${result.url}" target="_blank">
+        GitHubで開く
+    </a>
+</div>
 
 </body>
 </html>

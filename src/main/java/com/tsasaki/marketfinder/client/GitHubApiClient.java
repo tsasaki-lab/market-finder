@@ -8,6 +8,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import com.tsasaki.marketfinder.service.MarketScoreService;
 import com.tsasaki.marketfinder.dto.MarketScoreDto;
+import com.tsasaki.marketfinder.dto.GitHubIssueDto;
 
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,57 @@ public class GitHubApiClient {
 
         } catch (RestClientException e) {
             throw new IllegalStateException("GitHub APIの呼び出しに失敗しました。", e);
+        }
+    }
+
+    public List<GitHubIssueDto> searchIssues(String keyword, String language) {
+        try {
+            String query = StringUtils.hasText(language)
+                    ? keyword + " language:" + language + " type:issue"
+                    : keyword + " type:issue";
+
+            Map response = restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/search/issues")
+                            .queryParam("q", query)
+                            .queryParam("sort", "updated")
+                            .queryParam("order", "desc")
+                            .queryParam("per_page", 5)
+                            .build())
+                    .header("Authorization", "Bearer " + token)
+                    .header("Accept", "application/vnd.github+json")
+                    .retrieve()
+                    .body(Map.class);
+
+            if (response == null || response.get("items") == null) {
+                return List.of();
+            }
+
+            List<Map<String, Object>> items =
+                    (List<Map<String, Object>>) response.get("items");
+
+            return items.stream()
+                    .map(item -> {
+                        Map<String, Object> repository =
+                                (Map<String, Object>) item.get("repository");
+
+                        String repositoryName = repository == null
+                                ? "Unknown"
+                                : (String) repository.get("full_name");
+
+                        return new GitHubIssueDto(
+                                (String) item.get("title"),
+                                (String) item.get("html_url"),
+                                repositoryName,
+                                (String) item.get("state"),
+                                (String) item.get("created_at"),
+                                (String) item.get("updated_at")
+                        );
+                    })
+                    .toList();
+
+        } catch (RestClientException e) {
+            throw new IllegalStateException("GitHub Issues APIの呼び出しに失敗しました。", e);
         }
     }
 }

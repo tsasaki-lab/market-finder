@@ -5,6 +5,7 @@ import com.tsasaki.marketfinder.dto.GitHubRepositoryDto;
 import com.tsasaki.marketfinder.dto.SearchResponseDto;
 import com.tsasaki.marketfinder.dto.SearchSummaryDto;
 import org.springframework.stereotype.Service;
+import com.tsasaki.marketfinder.dto.GitHubIssueDto;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class SearchService {
         if (normalizedKeyword.isBlank()) {
             return new SearchResponseDto(
                     List.of(),
+                    List.of(),
                     null,
                     "検索キーワードを入力してください。",
                     new SearchSummaryDto(0, 0.0, 0, 0)
@@ -39,6 +41,7 @@ public class SearchService {
 
         if (normalizedKeyword.length() > MAX_KEYWORD_LENGTH) {
             return new SearchResponseDto(
+                    List.of(),
                     List.of(),
                     null,
                     "検索キーワードは50文字以内で入力してください。",
@@ -52,12 +55,16 @@ public class SearchService {
 
             List<GitHubRepositoryDto> sortedResults = sortResults(results, sort);
 
+            List<GitHubIssueDto> issues =
+                    gitHubApiClient.searchIssues(normalizedKeyword, normalizedLanguage);
+
             SearchSummaryDto summary = searchSummaryService.summarize(sortedResults);
 
-            return new SearchResponseDto(sortedResults, null, null, summary);
+            return new SearchResponseDto(sortedResults, issues, null, null, summary);
 
         } catch (IllegalStateException e) {
             return new SearchResponseDto(
+                    List.of(),
                     List.of(),
                     "検索中にエラーが発生しました。時間をおいて再度お試しください。",
                     null,

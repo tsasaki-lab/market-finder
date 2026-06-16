@@ -5,6 +5,12 @@ public record TrendAnalysisDto(
         int averageStars,
         int openIssueCount,
         int recentlyUpdatedIssueCount,
+
+        int popularityScore,
+        int activityScore,
+        int demandScore,
+        int painLevelScore,
+
         String trendLevel
 ) {
 }

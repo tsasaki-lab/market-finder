@@ -131,7 +131,19 @@ public class SearchService {
     }
 
     private TrendAnalysisDto emptyTrendAnalysis() {
-        return new TrendAnalysisDto(0.0, 0, 0, 0, "N/A");
+        return new TrendAnalysisDto(
+                0.0,
+                0,
+                0,
+                0,
+
+                0,
+                0,
+                0,
+                0,
+
+                "N/A"
+        );
     }
 
 }

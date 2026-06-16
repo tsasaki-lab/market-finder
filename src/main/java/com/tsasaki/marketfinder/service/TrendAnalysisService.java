@@ -35,10 +35,36 @@ public class TrendAnalysisService {
                 .filter(this::isRecent)
                 .count();
 
+        int popularityScore =
+                calculatePopularityScore(
+                        averageStars
+                );
+
+        int demandScore =
+                calculateDemandScore(
+                        recentIssues
+                );
+
+        int painLevelScore =
+                calculatePainLevelScore(
+                        openIssues
+                );
+
+        int activityScore =
+                calculateActivityScore(
+                        averageScore
+                );
+
+        int trendScore =
+                (
+                        popularityScore +
+                                activityScore +
+                                demandScore +
+                                painLevelScore
+                ) / 4;
+
         String trendLevel = calculateTrendLevel(
-                averageScore,
-                averageStars,
-                openIssues
+                trendScore
         );
 
         return new TrendAnalysisDto(
@@ -46,21 +72,25 @@ public class TrendAnalysisService {
                 averageStars,
                 openIssues,
                 recentIssues,
+
+                popularityScore,
+                activityScore,
+                demandScore,
+                painLevelScore,
+
                 trendLevel
         );
     }
 
     private String calculateTrendLevel(
-            double averageScore,
-            int averageStars,
-            int openIssues
+            int trendScore
     ) {
 
-        if (averageScore >= 80 && averageStars >= 10000) {
+        if (trendScore >= 80) {
             return "HOT 🔥";
         }
 
-        if (averageScore >= 60) {
+        if (trendScore >= 60) {
             return "WARM ☀️";
         }
 
@@ -84,5 +114,38 @@ public class TrendAnalysisService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private int calculatePopularityScore(
+            int averageStars
+    ) {
+        return Math.min(
+                averageStars / 500,
+                100
+        );
+    }
+
+    private int calculateDemandScore(
+            int recentIssues
+    ) {
+        return Math.min(
+                recentIssues * 10,
+                100
+        );
+    }
+
+    private int calculatePainLevelScore(
+            int openIssues
+    ) {
+        return Math.min(
+                openIssues * 5,
+                100
+        );
+    }
+
+    private int calculateActivityScore(
+            double averageMarketScore
+    ) {
+        return (int) averageMarketScore;
     }
 }

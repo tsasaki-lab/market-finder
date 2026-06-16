@@ -15,17 +15,20 @@ public class SearchService {
     private final SearchSummaryService searchSummaryService;
     private final IssueSummaryService issueSummaryService;
     private final TrendAnalysisService trendAnalysisService;
+    private final IssueKeywordAnalysisService issueKeywordAnalysisService;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
             SearchSummaryService searchSummaryService,
             IssueSummaryService issueSummaryService,
-            TrendAnalysisService trendAnalysisService
+            TrendAnalysisService trendAnalysisService,
+            IssueKeywordAnalysisService issueKeywordAnalysisService
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
         this.issueSummaryService = issueSummaryService;
         this.trendAnalysisService = trendAnalysisService;
+        this.issueKeywordAnalysisService = issueKeywordAnalysisService;
     }
 
     public SearchResponseDto search(String keyword, String language, String sort) {
@@ -40,7 +43,8 @@ public class SearchService {
                     "検索キーワードを入力してください。",
                     emptySearchSummary(),
                     emptyIssueSummary(),
-                    emptyTrendAnalysis()
+                    emptyTrendAnalysis(),
+                    emptyIssueKeywords()
             );
         }
 
@@ -52,7 +56,8 @@ public class SearchService {
                     "検索キーワードは50文字以内で入力してください。",
                     emptySearchSummary(),
                     emptyIssueSummary(),
-                    emptyTrendAnalysis()
+                    emptyTrendAnalysis(),
+                    emptyIssueKeywords()
             );
         }
 
@@ -75,6 +80,9 @@ public class SearchService {
                             issues
                     );
 
+            List<IssueKeywordDto> issueKeywords =
+                    issueKeywordAnalysisService.analyze(issues);
+
             return new SearchResponseDto(
                     sortedResults,
                     issues,
@@ -82,7 +90,8 @@ public class SearchService {
                     null,
                     summary,
                     issueSummary,
-                    trendAnalysis
+                    trendAnalysis,
+                    issueKeywords
             );
         } catch (IllegalStateException e) {
             return new SearchResponseDto(
@@ -92,7 +101,8 @@ public class SearchService {
                     null,
                     emptySearchSummary(),
                     emptyIssueSummary(),
-                    emptyTrendAnalysis()
+                    emptyTrendAnalysis(),
+                    emptyIssueKeywords()
             );
         }
     }
@@ -144,6 +154,9 @@ public class SearchService {
 
                 "N/A"
         );
+    }
+    private List<IssueKeywordDto> emptyIssueKeywords() {
+        return List.of();
     }
 
 }

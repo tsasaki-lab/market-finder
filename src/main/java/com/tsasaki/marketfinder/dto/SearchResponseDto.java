@@ -9,6 +9,7 @@ public record SearchResponseDto(
         String validationMessage,
         SearchSummaryDto summary,
         IssueSummaryDto issueSummary,
-        TrendAnalysisDto trendAnalysis
+        TrendAnalysisDto trendAnalysis,
+        List<IssueKeywordDto> issueKeywords
 ) {
 }

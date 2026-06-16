@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import com.tsasaki.marketfinder.service.MarketScoreService;
+import com.tsasaki.marketfinder.dto.MarketScoreDto;
 
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,8 @@ public class GitHubApiClient {
                         int stars = (Integer) item.get("stargazers_count");
                         String updatedAt = (String) item.get("updated_at");
 
+                        MarketScoreDto marketScore = marketScoreService.calculate(stars, updatedAt);
+
                         return new GitHubRepositoryDto(
                                 (String) item.get("name"),
                                 (String) item.get("full_name"),
@@ -68,7 +71,9 @@ public class GitHubApiClient {
                                 stars,
                                 (String) item.get("language"),
                                 updatedAt,
-                                marketScoreService.calculate(stars, updatedAt)
+                                marketScore.totalScore(),
+                                marketScore.starsScore(),
+                                marketScore.freshnessScore()
                         );
                     })
                     .toList();

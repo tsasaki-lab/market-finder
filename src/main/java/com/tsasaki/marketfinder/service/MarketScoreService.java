@@ -1,5 +1,6 @@
 package com.tsasaki.marketfinder.service;
 
+import com.tsasaki.marketfinder.dto.MarketScoreDto;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -8,13 +9,16 @@ import java.time.temporal.ChronoUnit;
 @Service
 public class MarketScoreService {
 
-    public int calculate(int stars, String updatedAt) {
-        int score = 0;
+    public MarketScoreDto calculate(int stars, String updatedAt) {
+        int starsScore = calculateStarScore(stars);
+        int freshnessScore = calculateFreshnessScore(updatedAt);
+        int totalScore = Math.min(starsScore + freshnessScore, 100);
 
-        score += calculateStarScore(stars);
-        score += calculateFreshnessScore(updatedAt);
-
-        return Math.min(score, 100);
+        return new MarketScoreDto(
+                totalScore,
+                starsScore,
+                freshnessScore
+        );
     }
 
     private int calculateStarScore(int stars) {

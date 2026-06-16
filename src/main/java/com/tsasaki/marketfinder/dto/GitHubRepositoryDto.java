@@ -8,6 +8,8 @@ public record GitHubRepositoryDto(
         int stars,
         String language,
         String updatedAt,
-        int marketScore
+        int marketScore,
+        int starsScore,
+        int freshnessScore
 ) {
 }

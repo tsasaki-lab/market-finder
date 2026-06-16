@@ -18,11 +18,15 @@
 <hr>
 
 <h2>GitHub検索結果</h2>
+<div th:if="${validationMessage != null}"
+     style="border: 1px solid #ffeeba; background: #fff3cd; padding: 12px; margin-bottom: 16px; border-radius: 8px;">
+    <p th:text="${validationMessage}"></p>
+</div>
 <div th:if="${errorMessage != null}"
      style="border: 1px solid #f5c2c7; background: #f8d7da; padding: 12px; margin-bottom: 16px; border-radius: 8px;">
     <p th:text="${errorMessage}"></p>
 </div>
-<div th:if="${errorMessage == null and #lists.isEmpty(results)}">
+<div th:if="${errorMessage == null and validationMessage == null and #lists.isEmpty(results)}">
     <p>検索結果がありません。</p>
 </div>
 

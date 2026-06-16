@@ -10,6 +10,8 @@ import java.util.List;
 @Service
 public class SearchService {
 
+    private static final int MAX_KEYWORD_LENGTH = 50;
+
     private final GitHubApiClient gitHubApiClient;
 
     public SearchService(GitHubApiClient gitHubApiClient) {
@@ -17,20 +19,35 @@ public class SearchService {
     }
 
     public SearchResponseDto search(String keyword) {
-        if (keyword == null || keyword.isBlank()) {
-            return new SearchResponseDto(List.of(), null);
+        String normalizedKeyword = keyword == null ? "" : keyword.trim();
+
+        if (normalizedKeyword.isBlank()) {
+            return new SearchResponseDto(
+                    List.of(),
+                    null,
+                    "検索キーワードを入力してください。"
+            );
+        }
+
+        if (normalizedKeyword.length() > MAX_KEYWORD_LENGTH) {
+            return new SearchResponseDto(
+                    List.of(),
+                    null,
+                    "検索キーワードは50文字以内で入力してください。"
+            );
         }
 
         try {
             List<GitHubRepositoryDto> results =
-                    gitHubApiClient.searchRepositories(keyword);
+                    gitHubApiClient.searchRepositories(normalizedKeyword);
 
-            return new SearchResponseDto(results, null);
+            return new SearchResponseDto(results, null, null);
 
         } catch (IllegalStateException e) {
             return new SearchResponseDto(
                     List.of(),
-                    "検索中にエラーが発生しました。時間をおいて再度お試しください。"
+                    "検索中にエラーが発生しました。時間をおいて再度お試しください。",
+                    null
             );
         }
     }

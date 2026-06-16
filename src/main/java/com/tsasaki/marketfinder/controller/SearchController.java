@@ -23,6 +23,7 @@ public class SearchController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("results", response.results());
         model.addAttribute("errorMessage", response.errorMessage());
+        model.addAttribute("validationMessage", response.validationMessage());
 
         return "search";
     }

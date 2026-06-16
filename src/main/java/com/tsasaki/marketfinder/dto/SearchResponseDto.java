@@ -4,9 +4,7 @@ import java.util.List;
 
 public record SearchResponseDto(
         List<GitHubRepositoryDto> results,
-        String errorMessage
+        String errorMessage,
+        String validationMessage
 ) {
-    public boolean hasError() {
-        return errorMessage != null && !errorMessage.isBlank();
-    }
 }

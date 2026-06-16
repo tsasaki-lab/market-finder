@@ -5,6 +5,8 @@ public record GitHubRepositoryDto(
         String fullName,
         String url,
         String description,
-        int stars
+        int stars,
+        String language,
+        String updatedAt
 ) {
 }

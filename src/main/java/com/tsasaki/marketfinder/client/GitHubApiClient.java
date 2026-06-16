@@ -50,7 +50,9 @@ public class GitHubApiClient {
                             (String) item.get("full_name"),
                             (String) item.get("html_url"),
                             (String) item.get("description"),
-                            (Integer) item.get("stargazers_count")
+                            (Integer) item.get("stargazers_count"),
+                            (String) item.get("language"),
+                            (String) item.get("updated_at")
                     ))
                     .toList();
 

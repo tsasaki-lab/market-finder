@@ -49,6 +49,16 @@
         <span th:text="${result.stars}"></span>
     </p>
 
+    <p>
+        🛠 Language:
+        <span th:text="${result.language != null ? result.language : 'Unknown'}"></span>
+    </p>
+
+    <p>
+        🕒 Updated:
+        <span th:text="${result.updatedAt}"></span>
+    </p>
+
     <a th:href="${result.url}" target="_blank">
         GitHubで開く
     </a>

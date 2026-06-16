@@ -16,11 +16,12 @@ public class SearchController {
     }
 
     @GetMapping("/search")
-    public String search(String keyword, Model model) {
+    public String search(String keyword, String language, Model model) {
 
-        SearchResponseDto response = searchService.search(keyword);
+        SearchResponseDto response = searchService.search(keyword, language);
 
         model.addAttribute("keyword", keyword);
+        model.addAttribute("language", language);
         model.addAttribute("results", response.results());
         model.addAttribute("errorMessage", response.errorMessage());
         model.addAttribute("validationMessage", response.validationMessage());

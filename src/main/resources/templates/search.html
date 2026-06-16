@@ -12,6 +12,10 @@
     検索キーワード:
     <strong th:text="${keyword}"></strong>
 </p>
+<p>
+    言語:
+    <strong th:text="${language == null || language.isBlank() ? '指定なし' : language}"></strong>
+</p>
 
 <a href="/">← トップへ戻る</a>
 

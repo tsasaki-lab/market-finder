@@ -18,8 +18,9 @@ public class SearchService {
         this.gitHubApiClient = gitHubApiClient;
     }
 
-    public SearchResponseDto search(String keyword) {
+    public SearchResponseDto search(String keyword, String language) {
         String normalizedKeyword = keyword == null ? "" : keyword.trim();
+        String normalizedLanguage = language == null ? "" : language.trim();
 
         if (normalizedKeyword.isBlank()) {
             return new SearchResponseDto(
@@ -39,7 +40,7 @@ public class SearchService {
 
         try {
             List<GitHubRepositoryDto> results =
-                    gitHubApiClient.searchRepositories(normalizedKeyword);
+                    gitHubApiClient.searchRepositories(normalizedKeyword, normalizedLanguage);
 
             return new SearchResponseDto(results, null, null);
 

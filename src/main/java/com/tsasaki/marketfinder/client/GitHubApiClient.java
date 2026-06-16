@@ -3,6 +3,7 @@ package com.tsasaki.marketfinder.client;
 import com.tsasaki.marketfinder.dto.GitHubRepositoryDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -22,12 +23,16 @@ public class GitHubApiClient {
                 .build();
     }
 
-    public List<GitHubRepositoryDto> searchRepositories(String keyword) {
+    public List<GitHubRepositoryDto> searchRepositories(String keyword, String language) {
         try {
+            String query = StringUtils.hasText(language)
+                    ? keyword + " language:" + language
+                    : keyword;
+
             Map response = restClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/search/repositories")
-                            .queryParam("q", keyword)
+                            .queryParam("q", query)
                             .queryParam("sort", "stars")
                             .queryParam("order", "desc")
                             .queryParam("per_page", 5)

@@ -25,6 +25,7 @@ public class SearchController {
         model.addAttribute("results", response.results());
         model.addAttribute("errorMessage", response.errorMessage());
         model.addAttribute("validationMessage", response.validationMessage());
+        model.addAttribute("summary", response.summary());
 
         return "search";
     }

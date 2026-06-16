@@ -34,6 +34,34 @@
     <p>検索結果がありません。</p>
 </div>
 
+<div th:if="${summary != null and errorMessage == null and validationMessage == null}"
+     style="border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; background: #f8f9fa;">
+
+    <h3>検索サマリー</h3>
+
+    <p>
+        件数:
+        <strong th:text="${summary.resultCount}"></strong>
+    </p>
+
+    <p>
+        平均Market Score:
+        <strong th:text="${#numbers.formatDecimal(summary.averageMarketScore, 1, 1)}"></strong>
+        / 100
+    </p>
+
+    <p>
+        最高Market Score:
+        <strong th:text="${summary.maxMarketScore}"></strong>
+        / 100
+    </p>
+
+    <p>
+        合計Stars:
+        <strong th:text="${summary.totalStars}"></strong>
+    </p>
+</div>
+
 <div th:each="result : ${results}"
      style="border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px;">
 

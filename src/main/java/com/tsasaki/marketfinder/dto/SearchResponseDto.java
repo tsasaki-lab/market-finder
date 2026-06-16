@@ -7,6 +7,7 @@ public record SearchResponseDto(
         List<GitHubIssueDto> issues,
         String errorMessage,
         String validationMessage,
-        SearchSummaryDto summary
+        SearchSummaryDto summary,
+        IssueSummaryDto issueSummary
 ) {
 }

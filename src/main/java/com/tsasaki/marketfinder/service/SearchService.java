@@ -6,6 +6,7 @@ import com.tsasaki.marketfinder.dto.SearchResponseDto;
 import com.tsasaki.marketfinder.dto.SearchSummaryDto;
 import org.springframework.stereotype.Service;
 import com.tsasaki.marketfinder.dto.GitHubIssueDto;
+import com.tsasaki.marketfinder.dto.IssueSummaryDto;
 
 import java.util.List;
 
@@ -16,13 +17,16 @@ public class SearchService {
 
     private final GitHubApiClient gitHubApiClient;
     private final SearchSummaryService searchSummaryService;
+    private final IssueSummaryService issueSummaryService;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
-            SearchSummaryService searchSummaryService
+            SearchSummaryService searchSummaryService,
+            IssueSummaryService issueSummaryService
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
+        this.issueSummaryService = issueSummaryService;
     }
 
     public SearchResponseDto search(String keyword, String language, String sort) {
@@ -35,7 +39,8 @@ public class SearchService {
                     List.of(),
                     null,
                     "検索キーワードを入力してください。",
-                    new SearchSummaryDto(0, 0.0, 0, 0)
+                    new SearchSummaryDto(0, 0.0, 0, 0),
+                    new IssueSummaryDto(0, 0, 0, 0)
             );
         }
 
@@ -45,7 +50,8 @@ public class SearchService {
                     List.of(),
                     null,
                     "検索キーワードは50文字以内で入力してください。",
-                    new SearchSummaryDto(0, 0.0, 0, 0)
+                    new SearchSummaryDto(0, 0.0, 0, 0),
+                    new IssueSummaryDto(0, 0, 0, 0)
             );
         }
 
@@ -60,15 +66,24 @@ public class SearchService {
 
             SearchSummaryDto summary = searchSummaryService.summarize(sortedResults);
 
-            return new SearchResponseDto(sortedResults, issues, null, null, summary);
+            IssueSummaryDto issueSummary = issueSummaryService.summarize(issues);
 
+            return new SearchResponseDto(
+                    sortedResults,
+                    issues,
+                    null,
+                    null,
+                    summary,
+                    issueSummary
+            );
         } catch (IllegalStateException e) {
             return new SearchResponseDto(
                     List.of(),
                     List.of(),
                     "検索中にエラーが発生しました。時間をおいて再度お試しください。",
                     null,
-                    new SearchSummaryDto(0, 0.0, 0, 0)
+                    new SearchSummaryDto(0, 0.0, 0, 0),
+                    new IssueSummaryDto(0, 0, 0, 0)
             );
         }
     }

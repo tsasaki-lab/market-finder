@@ -177,6 +177,46 @@
     <hr class="my-5">
 
     <h2 class="h4 mb-3">GitHub Issues</h2>
+    <div th:if="${issueSummary != null and errorMessage == null and validationMessage == null}"
+         class="row g-3 mb-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Issue件数</div>
+                    <div class="fs-4 fw-bold" th:text="${issueSummary.issueCount}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Open</div>
+                    <div class="fs-4 fw-bold" th:text="${issueSummary.openCount}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">Closed</div>
+                    <div class="fs-4 fw-bold" th:text="${issueSummary.closedCount}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted">30日以内更新</div>
+                    <div class="fs-4 fw-bold" th:text="${issueSummary.recentlyUpdatedCount}"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     <div th:if="${#lists.isEmpty(issues)}"
          class="alert alert-secondary">

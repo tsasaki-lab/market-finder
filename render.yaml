@@ -1,0 +1,5 @@
+services:
+  - type: web
+    name: market-finder
+    runtime: docker
+    plan: free

@@ -2,10 +2,16 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
     <title>検索結果 - Market Finder</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 </head>
+
 <body class="bg-light">
 
 <nav class="navbar navbar-dark bg-dark">
@@ -16,37 +22,69 @@
 
 <main class="container py-4">
 
+    <!-- Search Form -->
     <div class="bg-white rounded-3 shadow-sm p-4 mb-4">
         <h1 class="h3 mb-3">検索結果</h1>
 
         <form action="/search" method="get" class="row g-3">
             <div class="col-md-5">
-                <input type="text"
-                       name="keyword"
-                       th:value="${keyword}"
-                       class="form-control"
-                       placeholder="例: spring boot"
-                       required
-                       maxlength="50">
+                <input
+                    type="text"
+                    name="keyword"
+                    th:value="${keyword}"
+                    class="form-control"
+                    placeholder="例: spring boot"
+                    required
+                    maxlength="50">
             </div>
 
             <div class="col-md-3">
                 <select name="language" class="form-select">
-                    <option value="" th:selected="${language == null || language.isBlank()}">指定なし</option>
-                    <option value="Java" th:selected="${language == 'Java'}">Java</option>
-                    <option value="JavaScript" th:selected="${language == 'JavaScript'}">JavaScript</option>
-                    <option value="Python" th:selected="${language == 'Python'}">Python</option>
-                    <option value="TypeScript" th:selected="${language == 'TypeScript'}">TypeScript</option>
-                    <option value="Go" th:selected="${language == 'Go'}">Go</option>
+                    <option value=""
+                            th:selected="${language == null || language.isBlank()}">
+                        指定なし
+                    </option>
+                    <option value="Java"
+                            th:selected="${language == 'Java'}">
+                        Java
+                    </option>
+                    <option value="JavaScript"
+                            th:selected="${language == 'JavaScript'}">
+                        JavaScript
+                    </option>
+                    <option value="Python"
+                            th:selected="${language == 'Python'}">
+                        Python
+                    </option>
+                    <option value="TypeScript"
+                            th:selected="${language == 'TypeScript'}">
+                        TypeScript
+                    </option>
+                    <option value="Go"
+                            th:selected="${language == 'Go'}">
+                        Go
+                    </option>
+                    <option value="Rust"
+                            th:selected="${language == 'Rust'}">
+                        Rust
+                    </option>
                 </select>
             </div>
 
             <div class="col-md-3">
                 <select name="sort" class="form-select">
-                    <option value="stars" th:selected="${sort == null || sort.isBlank() || sort == 'stars'}">Stars順
+                    <option value="stars"
+                            th:selected="${sort == null || sort.isBlank() || sort == 'stars'}">
+                        Stars順
                     </option>
-                    <option value="marketScore" th:selected="${sort == 'marketScore'}">Market Score順</option>
-                    <option value="updated" th:selected="${sort == 'updated'}">更新日順</option>
+                    <option value="marketScore"
+                            th:selected="${sort == 'marketScore'}">
+                        Market Score順
+                    </option>
+                    <option value="updated"
+                            th:selected="${sort == 'updated'}">
+                        更新日順
+                    </option>
                 </select>
             </div>
 
@@ -58,19 +96,21 @@
         </form>
     </div>
 
-    <div th:if="${validationMessage != null}"
-         class="alert alert-warning">
-        <span th:text="${validationMessage}"></span>
-    </div>
-
+    <!-- Error Message -->
     <div th:if="${errorMessage != null}"
          class="alert alert-danger">
         <span th:text="${errorMessage}"></span>
     </div>
 
+    <!-- Validation Message -->
+    <div th:if="${validationMessage != null}"
+         class="alert alert-warning">
+        <span th:text="${validationMessage}"></span>
+    </div>
+
+    <!-- Search Summary -->
     <div th:if="${summary != null and errorMessage == null and validationMessage == null}"
          class="row g-3 mb-4">
-
         <div class="col-md-3">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -114,12 +154,13 @@
         </div>
     </div>
 
+    <!-- Repository Results -->
     <div th:if="${errorMessage == null and validationMessage == null and #lists.isEmpty(results)}"
          class="alert alert-secondary">
         検索結果がありません。
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4 mb-5">
         <div class="col-md-6" th:each="result : ${results}">
             <div class="card h-100 shadow-sm">
                 <div class="card-body">
@@ -148,11 +189,11 @@
                             <span th:text="${result.stars}"></span>
                         </li>
                         <li>
-                            🛠 Language:
+                            Language:
                             <span th:text="${result.language != null ? result.language : 'Unknown'}"></span>
                         </li>
                         <li>
-                            🕒 Updated:
+                            Updated:
                             <span th:text="${result.updatedAt}"></span>
                         </li>
                         <li>
@@ -177,10 +218,12 @@
 
     <hr class="my-5">
 
+    <!-- GitHub Issues -->
     <h2 class="h4 mb-3">GitHub Issues</h2>
+
+    <!-- Issue Summary -->
     <div th:if="${issueSummary != null and errorMessage == null and validationMessage == null}"
          class="row g-3 mb-4">
-
         <div class="col-md-3">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -216,111 +259,75 @@
                 </div>
             </div>
         </div>
-
     </div>
 
+    <!-- Top Issue Keywords -->
     <div th:if="${issueKeywords != null and !#lists.isEmpty(issueKeywords)}"
          class="card shadow-sm mb-4">
         <div class="card-body">
             <h3 class="h5 mb-3">Top Issue Keywords</h3>
 
             <div class="d-flex flex-wrap gap-2">
-            <span th:each="keyword : ${issueKeywords}"
-                  class="badge bg-dark fs-6">
-                <span th:text="${keyword.keyword}"></span>
-                <span th:text="' × ' + ${keyword.count}"></span>
-            </span>
+                <span th:each="keyword : ${issueKeywords}"
+                      class="badge bg-dark fs-6">
+                    <span th:text="${keyword.keyword}"></span>
+                    <span th:text="' × ' + ${keyword.count}"></span>
+                </span>
             </div>
         </div>
     </div>
 
-    <div class="card shadow-sm mb-4">
+    <!-- Trend Analysis -->
+    <div th:if="${trendAnalysis != null and errorMessage == null and validationMessage == null}"
+         class="card shadow-sm mb-4">
         <div class="card-body">
-
-            <h3>Trend Analysis</h3>
+            <h3 class="h5 mb-3">Trend Analysis</h3>
 
             <p>
                 Trend Level:
-                <strong
-                        th:text="${trendAnalysis.trendLevel}">
-                </strong>
+                <strong th:text="${trendAnalysis.trendLevel}"></strong>
             </p>
 
-            <div class="row g-3">
-
+            <div class="row text-center mb-3">
                 <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6>Popularity</h6>
-                            <h3 th:text="${trendAnalysis.popularityScore}">
-                            </h3>
-                        </div>
-                    </div>
+                    <div class="text-muted">Popularity</div>
+                    <div class="fs-4 fw-bold" th:text="${trendAnalysis.popularityScore}"></div>
                 </div>
 
                 <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6>Activity</h6>
-                            <h3 th:text="${trendAnalysis.activityScore}">
-                            </h3>
-                        </div>
-                    </div>
+                    <div class="text-muted">Activity</div>
+                    <div class="fs-4 fw-bold" th:text="${trendAnalysis.activityScore}"></div>
                 </div>
 
                 <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6>Demand</h6>
-                            <h3 th:text="${trendAnalysis.demandScore}">
-                            </h3>
-                        </div>
-                    </div>
+                    <div class="text-muted">Demand</div>
+                    <div class="fs-4 fw-bold" th:text="${trendAnalysis.demandScore}"></div>
                 </div>
 
                 <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6>Pain Level</h6>
-                            <h3 th:text="${trendAnalysis.painLevelScore}">
-                            </h3>
-                        </div>
-                    </div>
+                    <div class="text-muted">Pain Level</div>
+                    <div class="fs-4 fw-bold" th:text="${trendAnalysis.painLevelScore}"></div>
                 </div>
-
             </div>
 
-            <p>
-                Average Market Score:
-                <span
-                        th:text="${#numbers.formatDecimal(
-                    trendAnalysis.averageMarketScore,
-                    1,
-                    1)}">
-            </span>
-            </p>
-
-            <p>
-                Average Stars:
-                <span
-                        th:text="${trendAnalysis.averageStars}">
-            </span>
-            </p>
-
-            <p>
-                Open Issues:
-                <span
-                        th:text="${trendAnalysis.openIssueCount}">
-            </span>
-            </p>
-
-            <p>
-                Recent Issues:
-                <span
-                        th:text="${trendAnalysis.recentlyUpdatedIssueCount}">
-            </span>
-            </p>
-
+            <ul class="list-unstyled small mb-0">
+                <li>
+                    Average Market Score:
+                    <span th:text="${#numbers.formatDecimal(trendAnalysis.averageMarketScore, 1, 1)}"></span>
+                </li>
+                <li>
+                    Average Stars:
+                    <span th:text="${trendAnalysis.averageStars}"></span>
+                </li>
+                <li>
+                    Open Issues:
+                    <span th:text="${trendAnalysis.openIssueCount}"></span>
+                </li>
+                <li>
+                    Recent Issues:
+                    <span th:text="${trendAnalysis.recentlyUpdatedIssueCount}"></span>
+                </li>
+            </ul>
         </div>
     </div>
 

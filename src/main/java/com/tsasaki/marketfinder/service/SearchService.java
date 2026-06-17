@@ -31,19 +31,22 @@ public class SearchService {
     private final IssueSummaryService issueSummaryService;
     private final TrendAnalysisService trendAnalysisService;
     private final IssueKeywordAnalysisService issueKeywordAnalysisService;
+    private final AiSummaryService aiSummaryService;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
             SearchSummaryService searchSummaryService,
             IssueSummaryService issueSummaryService,
             TrendAnalysisService trendAnalysisService,
-            IssueKeywordAnalysisService issueKeywordAnalysisService
+            IssueKeywordAnalysisService issueKeywordAnalysisService,
+            AiSummaryService aiSummaryService
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
         this.issueSummaryService = issueSummaryService;
         this.trendAnalysisService = trendAnalysisService;
         this.issueKeywordAnalysisService = issueKeywordAnalysisService;
+        this.aiSummaryService = aiSummaryService;
     }
 
     /**
@@ -108,7 +111,7 @@ public class SearchService {
             List<IssueKeywordDto> issueKeywords =
                     issueKeywordAnalysisService.analyze(issues);
 
-            return new SearchResponseDto(
+            SearchResponseDto response = new SearchResponseDto(
                     sortedRepositories,
                     issues,
                     null,
@@ -118,6 +121,20 @@ public class SearchService {
                     trendAnalysis,
                     issueKeywords,
                     AiSummaryDto.unavailable()
+            );
+
+            AiSummaryDto aiSummary = aiSummaryService.generate(response);
+
+            return new SearchResponseDto(
+                    sortedRepositories,
+                    issues,
+                    null,
+                    null,
+                    summary,
+                    issueSummary,
+                    trendAnalysis,
+                    issueKeywords,
+                    aiSummary
             );
 
         } catch (IllegalStateException e) {

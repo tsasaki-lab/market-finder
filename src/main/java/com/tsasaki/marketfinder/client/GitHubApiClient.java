@@ -1,18 +1,26 @@
 package com.tsasaki.marketfinder.client;
 
+import com.tsasaki.marketfinder.dto.GitHubIssueDto;
 import com.tsasaki.marketfinder.dto.GitHubRepositoryDto;
+import com.tsasaki.marketfinder.dto.MarketScoreDto;
+import com.tsasaki.marketfinder.service.MarketScoreService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
-import com.tsasaki.marketfinder.service.MarketScoreService;
-import com.tsasaki.marketfinder.dto.MarketScoreDto;
-import com.tsasaki.marketfinder.dto.GitHubIssueDto;
 
 import java.util.List;
 import java.util.Map;
 
+/**
+ * GitHub REST API を呼び出すクライアントです。
+ *
+ * <p>
+ * Repository検索とIssue検索を担当します。
+ * APIトークンは環境変数から読み込まれるため、ソースコードには直接保持しません。
+ * </p>
+ */
 @Component
 public class GitHubApiClient {
 
@@ -31,8 +39,16 @@ public class GitHubApiClient {
                 .build();
     }
 
+    /**
+     * 指定されたキーワードと言語でGitHubリポジトリを検索します。
+     *
+     * @param keyword 検索キーワード
+     * @param language 絞り込み対象のプログラミング言語
+     * @return GitHubリポジトリ検索結果
+     */
     public List<GitHubRepositoryDto> searchRepositories(String keyword, String language) {
         try {
+            // GitHub Search APIでは language:Java のような修飾子で言語を絞り込む。
             String query = StringUtils.hasText(language)
                     ? keyword + " language:" + language
                     : keyword;
@@ -62,7 +78,8 @@ public class GitHubApiClient {
                         int stars = (Integer) item.get("stargazers_count");
                         String updatedAt = (String) item.get("updated_at");
 
-                        MarketScoreDto marketScore = marketScoreService.calculate(stars, updatedAt);
+                        MarketScoreDto marketScore =
+                                marketScoreService.calculate(stars, updatedAt);
 
                         return new GitHubRepositoryDto(
                                 (String) item.get("name"),
@@ -84,6 +101,13 @@ public class GitHubApiClient {
         }
     }
 
+    /**
+     * 指定されたキーワードと言語でGitHub Issueを検索します。
+     *
+     * @param keyword 検索キーワード
+     * @param language 絞り込み対象のプログラミング言語
+     * @return GitHub Issue検索結果
+     */
     public List<GitHubIssueDto> searchIssues(String keyword, String language) {
         try {
             String query = StringUtils.hasText(language)

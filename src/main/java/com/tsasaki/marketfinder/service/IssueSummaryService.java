@@ -8,9 +8,18 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+/**
+ * GitHub Issue検索結果のサマリーを作成するサービスです。
+ */
 @Service
 public class IssueSummaryService {
 
+    /**
+     * Issue件数、Open件数、Closed件数、最近更新されたIssue件数を算出します。
+     *
+     * @param issues GitHub Issue検索結果
+     * @return Issueサマリー
+     */
     public IssueSummaryDto summarize(List<GitHubIssueDto> issues) {
         if (issues == null || issues.isEmpty()) {
             return new IssueSummaryDto(0, 0, 0, 0);

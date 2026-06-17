@@ -6,9 +6,24 @@ import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * GitHubリポジトリの市場スコアを算出するサービスです。
+ *
+ * <p>
+ * 現時点では、人気度を示すStarsと、更新頻度を示すupdatedAtを使って
+ * 簡易的なMarket Scoreを算出します。
+ * </p>
+ */
 @Service
 public class MarketScoreService {
 
+    /**
+     * Starsと更新日時からMarket Scoreを算出します。
+     *
+     * @param stars GitHub Stars数
+     * @param updatedAt GitHubリポジトリの最終更新日時
+     * @return Market Scoreとその内訳
+     */
     public MarketScoreDto calculate(int stars, String updatedAt) {
         int starsScore = calculateStarScore(stars);
         int freshnessScore = calculateFreshnessScore(updatedAt);

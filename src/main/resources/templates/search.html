@@ -43,7 +43,8 @@
 
             <div class="col-md-3">
                 <select name="sort" class="form-select">
-                    <option value="stars" th:selected="${sort == null || sort.isBlank() || sort == 'stars'}">Stars順</option>
+                    <option value="stars" th:selected="${sort == null || sort.isBlank() || sort == 'stars'}">Stars順
+                    </option>
                     <option value="marketScore" th:selected="${sort == 'marketScore'}">Market Score順</option>
                     <option value="updated" th:selected="${sort == 'updated'}">更新日順</option>
                 </select>
@@ -217,7 +218,7 @@
         </div>
 
     </div>
-    
+
     <div th:if="${issueKeywords != null and !#lists.isEmpty(issueKeywords)}"
          class="card shadow-sm mb-4">
         <div class="card-body">

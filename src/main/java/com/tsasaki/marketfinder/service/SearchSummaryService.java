@@ -6,9 +6,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * リポジトリ検索結果全体のサマリーを作成するサービスです。
+ */
 @Service
 public class SearchSummaryService {
 
+    /**
+     * 検索結果件数、平均Market Score、最高Market Score、合計Starsを算出します。
+     *
+     * @param results リポジトリ検索結果
+     * @return 検索結果サマリー
+     */
     public SearchSummaryDto summarize(List<GitHubRepositoryDto> results) {
         if (results == null || results.isEmpty()) {
             return new SearchSummaryDto(0, 0.0, 0, 0);

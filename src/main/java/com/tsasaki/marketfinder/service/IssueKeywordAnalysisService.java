@@ -11,6 +11,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * GitHub Issueのタイトルから頻出キーワードを抽出するサービスです。
+ *
+ * <p>
+ * Issueタイトルに含まれる単語を集計することで、
+ * 開発者がどのような課題に直面しているかを把握しやすくします。
+ * </p>
+ */
 @Service
 public class IssueKeywordAnalysisService {
 
@@ -23,6 +31,12 @@ public class IssueKeywordAnalysisService {
             "add", "update", "support", "use", "using"
     );
 
+    /**
+     * Issueタイトルから頻出キーワードを抽出します。
+     *
+     * @param issues GitHub Issue検索結果
+     * @return 頻出キーワード一覧
+     */
     public List<IssueKeywordDto> analyze(List<GitHubIssueDto> issues) {
         if (issues == null || issues.isEmpty()) {
             return List.of();

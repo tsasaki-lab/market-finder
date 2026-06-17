@@ -1,11 +1,25 @@
 package com.tsasaki.marketfinder.service;
 
 import com.tsasaki.marketfinder.client.GitHubApiClient;
-import com.tsasaki.marketfinder.dto.*;
+import com.tsasaki.marketfinder.dto.GitHubIssueDto;
+import com.tsasaki.marketfinder.dto.GitHubRepositoryDto;
+import com.tsasaki.marketfinder.dto.IssueKeywordDto;
+import com.tsasaki.marketfinder.dto.IssueSummaryDto;
+import com.tsasaki.marketfinder.dto.SearchResponseDto;
+import com.tsasaki.marketfinder.dto.SearchSummaryDto;
+import com.tsasaki.marketfinder.dto.TrendAnalysisDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 検索処理全体を制御するサービスです。
+ *
+ * <p>
+ * 入力チェック、GitHub API呼び出し、並び替え、サマリー生成、
+ * トレンド分析、Issueキーワード分析をまとめて実行します。
+ * </p>
+ */
 @Service
 public class SearchService {
 
@@ -31,6 +45,14 @@ public class SearchService {
         this.issueKeywordAnalysisService = issueKeywordAnalysisService;
     }
 
+    /**
+     * 指定された条件で市場調査用の検索を実行します。
+     *
+     * @param keyword 検索キーワード
+     * @param language 絞り込み対象のプログラミング言語
+     * @param sort 並び替え条件
+     * @return 検索結果、サマリー、分析結果を含むレスポンス
+     */
     public SearchResponseDto search(String keyword, String language, String sort) {
         String normalizedKeyword = keyword == null ? "" : keyword.trim();
         String normalizedLanguage = language == null ? "" : language.trim();
@@ -44,7 +66,7 @@ public class SearchService {
                     emptySearchSummary(),
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
-                    emptyIssueKeywords()
+                    List.of()
             );
         }
 
@@ -57,34 +79,34 @@ public class SearchService {
                     emptySearchSummary(),
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
-                    emptyIssueKeywords()
+                    List.of()
             );
         }
 
         try {
-            List<GitHubRepositoryDto> results =
+            List<GitHubRepositoryDto> repositories =
                     gitHubApiClient.searchRepositories(normalizedKeyword, normalizedLanguage);
 
-            List<GitHubRepositoryDto> sortedResults = sortResults(results, sort);
+            List<GitHubRepositoryDto> sortedRepositories =
+                    sortResults(repositories, sort);
 
             List<GitHubIssueDto> issues =
                     gitHubApiClient.searchIssues(normalizedKeyword, normalizedLanguage);
 
-            SearchSummaryDto summary = searchSummaryService.summarize(sortedResults);
+            SearchSummaryDto summary =
+                    searchSummaryService.summarize(sortedRepositories);
 
-            IssueSummaryDto issueSummary = issueSummaryService.summarize(issues);
+            IssueSummaryDto issueSummary =
+                    issueSummaryService.summarize(issues);
 
             TrendAnalysisDto trendAnalysis =
-                    trendAnalysisService.analyze(
-                            sortedResults,
-                            issues
-                    );
+                    trendAnalysisService.analyze(sortedRepositories, issues);
 
             List<IssueKeywordDto> issueKeywords =
                     issueKeywordAnalysisService.analyze(issues);
 
             return new SearchResponseDto(
-                    sortedResults,
+                    sortedRepositories,
                     issues,
                     null,
                     null,
@@ -93,6 +115,7 @@ public class SearchService {
                     trendAnalysis,
                     issueKeywords
             );
+
         } catch (IllegalStateException e) {
             return new SearchResponseDto(
                     List.of(),
@@ -102,11 +125,18 @@ public class SearchService {
                     emptySearchSummary(),
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
-                    emptyIssueKeywords()
+                    List.of()
             );
         }
     }
 
+    /**
+     * 指定された条件でリポジトリ検索結果を並び替えます。
+     *
+     * @param results リポジトリ検索結果
+     * @param sort 並び替え条件
+     * @return 並び替え後のリポジトリ検索結果
+     */
     private List<GitHubRepositoryDto> sortResults(
             List<GitHubRepositoryDto> results,
             String sort
@@ -141,22 +171,6 @@ public class SearchService {
     }
 
     private TrendAnalysisDto emptyTrendAnalysis() {
-        return new TrendAnalysisDto(
-                0.0,
-                0,
-                0,
-                0,
-
-                0,
-                0,
-                0,
-                0,
-
-                "N/A"
-        );
+        return new TrendAnalysisDto(0.0, 0, 0, 0, 0, 0, 0, 0, "N/A");
     }
-    private List<IssueKeywordDto> emptyIssueKeywords() {
-        return List.of();
-    }
-
 }

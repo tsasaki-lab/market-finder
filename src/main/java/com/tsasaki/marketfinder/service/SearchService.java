@@ -8,6 +8,7 @@ import com.tsasaki.marketfinder.dto.IssueSummaryDto;
 import com.tsasaki.marketfinder.dto.SearchResponseDto;
 import com.tsasaki.marketfinder.dto.SearchSummaryDto;
 import com.tsasaki.marketfinder.dto.TrendAnalysisDto;
+import com.tsasaki.marketfinder.dto.AiSummaryDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,9 +49,9 @@ public class SearchService {
     /**
      * 指定された条件で市場調査用の検索を実行します。
      *
-     * @param keyword 検索キーワード
+     * @param keyword  検索キーワード
      * @param language 絞り込み対象のプログラミング言語
-     * @param sort 並び替え条件
+     * @param sort     並び替え条件
      * @return 検索結果、サマリー、分析結果を含むレスポンス
      */
     public SearchResponseDto search(String keyword, String language, String sort) {
@@ -66,7 +67,8 @@ public class SearchService {
                     emptySearchSummary(),
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
-                    List.of()
+                    List.of(),
+                    AiSummaryDto.unavailable()
             );
         }
 
@@ -79,7 +81,8 @@ public class SearchService {
                     emptySearchSummary(),
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
-                    List.of()
+                    List.of(),
+                    AiSummaryDto.unavailable()
             );
         }
 
@@ -113,7 +116,8 @@ public class SearchService {
                     summary,
                     issueSummary,
                     trendAnalysis,
-                    issueKeywords
+                    issueKeywords,
+                    AiSummaryDto.unavailable()
             );
 
         } catch (IllegalStateException e) {
@@ -125,7 +129,8 @@ public class SearchService {
                     emptySearchSummary(),
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
-                    List.of()
+                    List.of(),
+                    AiSummaryDto.unavailable()
             );
         }
     }
@@ -134,7 +139,7 @@ public class SearchService {
      * 指定された条件でリポジトリ検索結果を並び替えます。
      *
      * @param results リポジトリ検索結果
-     * @param sort 並び替え条件
+     * @param sort    並び替え条件
      * @return 並び替え後のリポジトリ検索結果
      */
     private List<GitHubRepositoryDto> sortResults(

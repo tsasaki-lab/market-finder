@@ -111,6 +111,15 @@ public class AiSummaryService {
                 Demand Scoreが高い場合はSaaS需要、
                 Activity Scoreが高い場合は現在も動きがある市場として扱ってください。
 
+                Issue Summary / Issue Keywordsの意味:
+                - Issue Summaryは、検索対象に関連するIssue全体の件数や状態を示します
+                - Open Countが多い場合は、未解決課題が多い可能性があります
+                - Recently Updated Countが多い場合は、現在も議論や改善が続いている可能性があります
+                - Issue Keywordsは、開発者がIssueで頻繁に言及している課題・関心語です
+
+                分析では、Issue Keywordsを開発者課題の根拠として扱い、
+                SaaS機会を考える際はOpen CountやRecently Updated Countも参考にしてください。
+                
                 出力条件:
                 - 必ず自然な日本語で出力する
                 - 中国語、簡体字、繁体字を使わない
@@ -220,6 +229,31 @@ public class AiSummaryService {
                         .append("\n")
                 );
 
+        prompt.append("\n");
+
+        prompt.append("Issue Summary:\n");
+        prompt.append("- Issue Count: ")
+                .append(response.issueSummary().issueCount())
+                .append("\n");
+        prompt.append("- Open Count: ")
+                .append(response.issueSummary().openCount())
+                .append("\n");
+        prompt.append("- Closed Count: ")
+                .append(response.issueSummary().closedCount())
+                .append("\n");
+        prompt.append("- Recently Updated Count: ")
+                .append(response.issueSummary().recentlyUpdatedCount())
+                .append("\n\n");
+
+        prompt.append("Issue Keywords:\n");
+        response.issueKeywords().stream()
+                .limit(8)
+                .forEach(keyword -> prompt.append("- ")
+                        .append(keyword.keyword())
+                        .append(": ")
+                        .append(keyword.count())
+                        .append("\n")
+                );
         prompt.append("\n");
 
         prompt.append("主要Issue:\n");

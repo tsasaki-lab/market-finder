@@ -8,6 +8,7 @@ import com.tsasaki.marketfinder.dto.IssueSummaryDto;
 import com.tsasaki.marketfinder.dto.SearchResponseDto;
 import com.tsasaki.marketfinder.dto.SearchSummaryDto;
 import com.tsasaki.marketfinder.dto.TrendAnalysisDto;
+import com.tsasaki.marketfinder.dto.AiSummaryDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,27 +31,30 @@ public class SearchService {
     private final IssueSummaryService issueSummaryService;
     private final TrendAnalysisService trendAnalysisService;
     private final IssueKeywordAnalysisService issueKeywordAnalysisService;
+    private final AiSummaryService aiSummaryService;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
             SearchSummaryService searchSummaryService,
             IssueSummaryService issueSummaryService,
             TrendAnalysisService trendAnalysisService,
-            IssueKeywordAnalysisService issueKeywordAnalysisService
+            IssueKeywordAnalysisService issueKeywordAnalysisService,
+            AiSummaryService aiSummaryService
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
         this.issueSummaryService = issueSummaryService;
         this.trendAnalysisService = trendAnalysisService;
         this.issueKeywordAnalysisService = issueKeywordAnalysisService;
+        this.aiSummaryService = aiSummaryService;
     }
 
     /**
      * 指定された条件で市場調査用の検索を実行します。
      *
-     * @param keyword 検索キーワード
+     * @param keyword  検索キーワード
      * @param language 絞り込み対象のプログラミング言語
-     * @param sort 並び替え条件
+     * @param sort     並び替え条件
      * @return 検索結果、サマリー、分析結果を含むレスポンス
      */
     public SearchResponseDto search(String keyword, String language, String sort) {
@@ -66,7 +70,8 @@ public class SearchService {
                     emptySearchSummary(),
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
-                    List.of()
+                    List.of(),
+                    AiSummaryDto.unavailable()
             );
         }
 
@@ -79,7 +84,8 @@ public class SearchService {
                     emptySearchSummary(),
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
-                    List.of()
+                    List.of(),
+                    AiSummaryDto.unavailable()
             );
         }
 
@@ -105,6 +111,20 @@ public class SearchService {
             List<IssueKeywordDto> issueKeywords =
                     issueKeywordAnalysisService.analyze(issues);
 
+            SearchResponseDto response = new SearchResponseDto(
+                    sortedRepositories,
+                    issues,
+                    null,
+                    null,
+                    summary,
+                    issueSummary,
+                    trendAnalysis,
+                    issueKeywords,
+                    AiSummaryDto.unavailable()
+            );
+
+            AiSummaryDto aiSummary = aiSummaryService.generate(response);
+
             return new SearchResponseDto(
                     sortedRepositories,
                     issues,
@@ -113,7 +133,8 @@ public class SearchService {
                     summary,
                     issueSummary,
                     trendAnalysis,
-                    issueKeywords
+                    issueKeywords,
+                    aiSummary
             );
 
         } catch (IllegalStateException e) {
@@ -125,7 +146,8 @@ public class SearchService {
                     emptySearchSummary(),
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
-                    List.of()
+                    List.of(),
+                    AiSummaryDto.unavailable()
             );
         }
     }
@@ -134,7 +156,7 @@ public class SearchService {
      * 指定された条件でリポジトリ検索結果を並び替えます。
      *
      * @param results リポジトリ検索結果
-     * @param sort 並び替え条件
+     * @param sort    並び替え条件
      * @return 並び替え後のリポジトリ検索結果
      */
     private List<GitHubRepositoryDto> sortResults(

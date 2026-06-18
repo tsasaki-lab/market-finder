@@ -8,7 +8,7 @@ import java.util.List;
  * <p>
  * リポジトリ検索結果、Issue検索結果、
  * 各種サマリー情報、トレンド分析結果、
- * Issueキーワード分析結果をまとめて管理します。
+ * Issueキーワード分析結果、AI分析結果をまとめて管理します。
  * </p>
  *
  * @param results           リポジトリ検索結果
@@ -19,6 +19,7 @@ import java.util.List;
  * @param issueSummary      Issue検索結果サマリー
  * @param trendAnalysis     市場トレンド分析結果
  * @param issueKeywords     Issue頻出キーワード分析結果
+ * @param aiSummary         AIによる市場分析結果
  */
 public record SearchResponseDto(
         List<GitHubRepositoryDto> results,
@@ -28,6 +29,7 @@ public record SearchResponseDto(
         SearchSummaryDto summary,
         IssueSummaryDto issueSummary,
         TrendAnalysisDto trendAnalysis,
-        List<IssueKeywordDto> issueKeywords
+        List<IssueKeywordDto> issueKeywords,
+        AiSummaryDto aiSummary
 ) {
 }

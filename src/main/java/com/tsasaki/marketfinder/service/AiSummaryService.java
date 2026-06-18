@@ -4,8 +4,11 @@ import com.tsasaki.marketfinder.client.OpenAiSummaryClient;
 import com.tsasaki.marketfinder.dto.AiSummaryDto;
 import com.tsasaki.marketfinder.dto.SearchResponseDto;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * GitHub検索結果をもとに市場インサイトを生成するサービスです。
@@ -19,9 +22,11 @@ import java.util.List;
 public class AiSummaryService {
 
     private final OpenAiSummaryClient openAiSummaryClient;
+    private final ObjectMapper objectMapper;
 
-    public AiSummaryService(OpenAiSummaryClient openAiSummaryClient) {
+    public AiSummaryService(OpenAiSummaryClient openAiSummaryClient, ObjectMapper objectMapper) {
         this.openAiSummaryClient = openAiSummaryClient;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -36,20 +41,38 @@ public class AiSummaryService {
         }
 
         String prompt = buildPrompt(response);
-        String marketSummary = openAiSummaryClient.generate(prompt);
+        String content = openAiSummaryClient.generate(prompt);
 
-        if (marketSummary == null || marketSummary.isBlank()) {
+        if (content == null || content.isBlank()) {
             return AiSummaryDto.unavailable();
         }
 
-        return AiSummaryDto.of(
-                marketSummary,
-                "Issue内容から、導入・設定・依存関係管理に課題がある可能性があります。",
-                "マイクロサービス化、コンテナ化、自動化の需要が見られます。",
-                "依存関係分析や開発環境支援をSaaS化できる可能性があります。",
-                List.of(),
-                List.of()
-        );
+        try {
+            Map<String, String> result = objectMapper.readValue(
+                    content,
+                    new TypeReference<>() {
+                    }
+            );
+
+            return AiSummaryDto.of(
+                    result.getOrDefault("marketSummary", ""),
+                    result.getOrDefault("developerPain", ""),
+                    result.getOrDefault("technologyTrend", ""),
+                    result.getOrDefault("saasOpportunity", ""),
+                    List.of(),
+                    List.of()
+            );
+
+        } catch (Exception e) {
+            return AiSummaryDto.of(
+                    content,
+                    "AI分析結果の構造化に失敗しました。",
+                    "AI分析結果の構造化に失敗しました。",
+                    "AI分析結果の構造化に失敗しました。",
+                    List.of(),
+                    List.of()
+            );
+        }
     }
 
     /**
@@ -91,11 +114,20 @@ public class AiSummaryService {
                 - 「自动化」は使わず「自動化」と書く
 
                 出力形式:
-                市場インサイト本文のみを出力してください。
-                見出しは禁止です。
-                箇条書きは禁止です。
+                必ず次のJSON形式のみで出力してください。
+                JSON以外の文章、見出し、Markdown、コードブロックは禁止です。
+
+                {
+                  "marketSummary": "市場全体の要約を120文字以内で記述",
+                  "developerPain": "開発者が抱える課題を80文字以内で記述",
+                  "technologyTrend": "技術トレンドを80文字以内で記述",
+                  "saasOpportunity": "SaaSとしての事業機会を80文字以内で記述"
+                }
+
+                JSONのキー名は必ず変更しないでください。
+                値は必ず自然な日本語で記述してください。
+                中国語、簡体字、繁体字は禁止です。
                 Markdownは禁止です。
-                コードブロックは禁止です。
 
                 """);
 

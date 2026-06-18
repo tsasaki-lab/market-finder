@@ -341,29 +341,19 @@
 
         <div class="card-body">
 
-            <h5 class="card-title">
-                市場インサイト
-            </h5>
-
+            <h5 class="card-title">市場インサイト</h5>
             <p th:text="${aiSummary.marketSummary}"></p>
 
             <hr>
 
-            <h6>主要トレンド</h6>
+            <h6>開発者課題</h6>
+            <p th:text="${aiSummary.developerPain}"></p>
 
-            <ul>
-                <li th:each="trend : ${aiSummary.keyTrends}"
-                    th:text="${trend}">
-                </li>
-            </ul>
+            <h6>技術トレンド</h6>
+            <p th:text="${aiSummary.technologyTrend}"></p>
 
-            <h6>事業機会</h6>
-
-            <ul>
-                <li th:each="opportunity : ${aiSummary.opportunities}"
-                    th:text="${opportunity}">
-                </li>
-            </ul>
+            <h6>SaaS機会</h6>
+            <p th:text="${aiSummary.saasOpportunity}"></p>
 
         </div>
     </div>

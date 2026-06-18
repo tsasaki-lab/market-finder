@@ -44,13 +44,11 @@ public class AiSummaryService {
 
         return AiSummaryDto.of(
                 marketSummary,
-                List.of(
-                        "AIが市場概要を生成しました",
-                        "詳細なトレンド抽出は次フェーズで対応予定です"
-                ),
-                List.of(
-                        "AI SummaryをもとにSaaS仮説を検討できます"
-                )
+                "Issue内容から、導入・設定・依存関係管理に課題がある可能性があります。",
+                "マイクロサービス化、コンテナ化、自動化の需要が見られます。",
+                "依存関係分析や開発環境支援をSaaS化できる可能性があります。",
+                List.of(),
+                List.of()
         );
     }
 
@@ -100,7 +98,7 @@ public class AiSummaryService {
                 コードブロックは禁止です。
 
                 """);
-        
+
         prompt.append("""
                 用語ルール:
 

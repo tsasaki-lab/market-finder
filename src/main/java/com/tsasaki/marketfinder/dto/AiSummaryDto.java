@@ -14,6 +14,9 @@ public class AiSummaryDto {
 
     private boolean available;
     private String marketSummary;
+    private String developerPain;
+    private String technologyTrend;
+    private String saasOpportunity;
     private List<String> keyTrends;
     private List<String> opportunities;
 
@@ -32,6 +35,9 @@ public class AiSummaryDto {
         AiSummaryDto dto = new AiSummaryDto();
         dto.setAvailable(false);
         dto.setMarketSummary("AI Summary is not available.");
+        dto.setDeveloperPain("");
+        dto.setTechnologyTrend("");
+        dto.setSaasOpportunity("");
         dto.setKeyTrends(List.of());
         dto.setOpportunities(List.of());
         return dto;
@@ -45,10 +51,20 @@ public class AiSummaryDto {
      * @param opportunities 事業機会
      * @return AI分析結果を保持するDTO
      */
-    public static AiSummaryDto of(String marketSummary, List<String> keyTrends, List<String> opportunities) {
+    public static AiSummaryDto of(
+            String marketSummary,
+            String developerPain,
+            String technologyTrend,
+            String saasOpportunity,
+            List<String> keyTrends,
+            List<String> opportunities
+    ) {
         AiSummaryDto dto = new AiSummaryDto();
         dto.setAvailable(true);
         dto.setMarketSummary(marketSummary);
+        dto.setDeveloperPain(developerPain);
+        dto.setTechnologyTrend(technologyTrend);
+        dto.setSaasOpportunity(saasOpportunity);
         dto.setKeyTrends(keyTrends);
         dto.setOpportunities(opportunities);
         return dto;
@@ -68,6 +84,30 @@ public class AiSummaryDto {
 
     public void setMarketSummary(String marketSummary) {
         this.marketSummary = marketSummary;
+    }
+
+    public String getDeveloperPain() {
+        return developerPain;
+    }
+
+    public void setDeveloperPain(String developerPain) {
+        this.developerPain = developerPain;
+    }
+
+    public String getTechnologyTrend() {
+        return technologyTrend;
+    }
+
+    public void setTechnologyTrend(String technologyTrend) {
+        this.technologyTrend = technologyTrend;
+    }
+
+    public String getSaasOpportunity() {
+        return saasOpportunity;
+    }
+
+    public void setSaasOpportunity(String saasOpportunity) {
+        this.saasOpportunity = saasOpportunity;
     }
 
     public List<String> getKeyTrends() {

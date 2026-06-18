@@ -99,6 +99,18 @@ public class AiSummaryService {
                 分析では、単にStars数が多いRepositoryだけでなく、
                 Market Scoreが高いRepositoryを優先してSaaS機会を判断してください。
 
+                Trend Analysisの意味:
+                - Popularity Score: GitHub Starsなどから見た人気度
+                - Activity Score: 更新状況やIssue状況から見た活動度
+                - Demand Score: Issue数などから見た需要の強さ
+                - Pain Level Score: 未解決Issueなどから見た開発者課題の強さ
+                - Trend Level: 総合的なトレンド評価
+
+                分析では、Trend Analysisも考慮してください。
+                特にPain Level Scoreが高い場合は開発者課題、
+                Demand Scoreが高い場合はSaaS需要、
+                Activity Scoreが高い場合は現在も動きがある市場として扱ってください。
+
                 出力条件:
                 - 必ず自然な日本語で出力する
                 - 中国語、簡体字、繁体字を使わない
@@ -165,6 +177,26 @@ public class AiSummaryService {
 
         prompt.append("Issue件数: ")
                 .append(response.issues().size())
+                .append("\n\n");
+
+        prompt.append("Trend Analysis:\n");
+        prompt.append("- Average Market Score: ")
+                .append(response.trendAnalysis().averageMarketScore())
+                .append("\n");
+        prompt.append("- Popularity Score: ")
+                .append(response.trendAnalysis().popularityScore())
+                .append("\n");
+        prompt.append("- Activity Score: ")
+                .append(response.trendAnalysis().activityScore())
+                .append("\n");
+        prompt.append("- Demand Score: ")
+                .append(response.trendAnalysis().demandScore())
+                .append("\n");
+        prompt.append("- Pain Level Score: ")
+                .append(response.trendAnalysis().painLevelScore())
+                .append("\n");
+        prompt.append("- Trend Level: ")
+                .append(response.trendAnalysis().trendLevel())
                 .append("\n\n");
 
         prompt.append("上位リポジトリ:\n");

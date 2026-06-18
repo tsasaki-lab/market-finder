@@ -331,6 +331,43 @@
         </div>
     </div>
 
+    <!-- AI Summary -->
+    <div th:if="${aiSummary != null and aiSummary.available}"
+         class="card shadow-sm mb-4 border-primary">
+
+        <div class="card-header bg-primary text-white">
+            AI Summary
+        </div>
+
+        <div class="card-body">
+
+            <h5 class="card-title">
+                市場インサイト
+            </h5>
+
+            <p th:text="${aiSummary.marketSummary}"></p>
+
+            <hr>
+
+            <h6>主要トレンド</h6>
+
+            <ul>
+                <li th:each="trend : ${aiSummary.keyTrends}"
+                    th:text="${trend}">
+                </li>
+            </ul>
+
+            <h6>事業機会</h6>
+
+            <ul>
+                <li th:each="opportunity : ${aiSummary.opportunities}"
+                    th:text="${opportunity}">
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
     <div th:if="${#lists.isEmpty(issues)}"
          class="alert alert-secondary">
         Issue検索結果がありません。

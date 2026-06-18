@@ -91,6 +91,14 @@ public class AiSummaryService {
                 以下のGitHubリポジトリ情報とIssue情報をもとに、
                 開発者向けSaaSの市場機会を分析してください。
 
+                Market Finder独自スコアの意味:
+                - Market Score: Stars ScoreとFreshness Scoreをもとにした総合的な市場性スコア
+                - Stars Score: GitHub Starsをもとにした人気度スコア
+                - Freshness Score: 最終更新日時をもとにした鮮度・継続性スコア
+
+                分析では、単にStars数が多いRepositoryだけでなく、
+                Market Scoreが高いRepositoryを優先してSaaS機会を判断してください。
+
                 出力条件:
                 - 必ず自然な日本語で出力する
                 - 中国語、簡体字、繁体字を使わない
@@ -129,9 +137,6 @@ public class AiSummaryService {
                 中国語、簡体字、繁体字は禁止です。
                 Markdownは禁止です。
 
-                """);
-
-        prompt.append("""
                 用語ルール:
 
                 - 中国語は禁止
@@ -151,25 +156,6 @@ public class AiSummaryService {
 
                 """);
 
-        prompt.append("""
-                出力条件:
-
-                - 必ず自然な日本語
-                - 中国語禁止
-                - 英語混在禁止
-                - 120〜220文字以内
-                - 2〜3文でまとめる
-                - 冗長な説明は禁止
-                - 市場分析の要点のみ記載
-
-                必ず以下を含める
-
-                1. 開発者課題
-                2. 技術トレンド
-                3. SaaS機会
-
-                """);
-
         prompt.append("検索対象情報\n");
         prompt.append("------------------------------\n");
 
@@ -185,16 +171,21 @@ public class AiSummaryService {
 
         response.results().stream()
                 .limit(5)
-                .forEach(repository ->
-                        prompt.append("- ")
-                                .append(repository.fullName())
-                                .append(" | Stars=")
-                                .append(repository.stars())
-                                .append(" | Language=")
-                                .append(repository.language())
-                                .append(" | Description=")
-                                .append(repository.description())
-                                .append("\n")
+                .forEach(repository -> prompt.append("- ")
+                        .append(repository.fullName())
+                        .append(" | Stars=")
+                        .append(repository.stars())
+                        .append(" | Language=")
+                        .append(repository.language())
+                        .append(" | Market Score=")
+                        .append(repository.marketScore())
+                        .append(" | Stars Score=")
+                        .append(repository.starsScore())
+                        .append(" | Freshness Score=")
+                        .append(repository.freshnessScore())
+                        .append(" | Description=")
+                        .append(repository.description())
+                        .append("\n")
                 );
 
         prompt.append("\n");

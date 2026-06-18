@@ -91,11 +91,11 @@ GitHub Issueを分析し、開発者が抱える課題を可視化します。
 
 ---
 
-### AI Summary (v0.4.0)
+### AI Summary
 
 OpenAI APIを利用した市場分析機能です。
 
-GitHub RepositoryとIssue情報をもとに、
+GitHub Repository、Issue、Market Finder独自スコアをもとに、
 
 * 市場インサイト
 * 開発者課題
@@ -103,6 +103,15 @@ GitHub RepositoryとIssue情報をもとに、
 * SaaS機会
 
 を自動生成します。
+
+AI分析では以下の情報を活用しています。
+
+* Market Score
+* Stars Score
+* Freshness Score
+* Trend Analysis
+* Issue Summary
+* Issue Keywords
 
 ---
 
@@ -114,7 +123,7 @@ GitHub RepositoryとIssue情報をもとに、
 * Thymeleaf
 * Bootstrap
 * GitHub REST API
-* OpenAI API
+* OpenAI Responses API
 
 ---
 
@@ -152,6 +161,15 @@ http://localhost:8080
 
 ## Releases
 
+### v0.4.1
+
+* AI分析品質向上
+* Market ScoreをAI Promptへ追加
+* Stars Score / Freshness ScoreをAI分析へ反映
+* Trend AnalysisをAI分析へ反映
+* Issue Summary / Issue KeywordsをAI分析へ反映
+* AI Prompt最適化
+
 ### v0.4.0
 
 * AI Summary追加
@@ -172,20 +190,15 @@ http://localhost:8080
 
 ## Roadmap
 
-### v0.4.1
-
-* AI分析品質向上
-* Market ScoreをAI分析へ反映
-* Prompt最適化
-
 ### v0.5.0
 
 * Opportunity Score
 * SaaS機会ランキング
 * 市場比較分析
 
----
+### v0.6.0
 
-## License
-
-MIT License
+* AI Opportunity Ranking
+* 市場成長性分析
+* GitHub競合分析
+* SaaSアイデア自動生成

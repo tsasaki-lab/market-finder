@@ -44,6 +44,7 @@ public class SearchController {
         model.addAttribute("trendAnalysis", response.trendAnalysis());
         model.addAttribute("issueKeywords", response.issueKeywords());
         model.addAttribute("aiSummary", response.aiSummary());
+        model.addAttribute("opportunities", response.opportunities());
 
         return "search";
     }

@@ -1,14 +1,7 @@
 package com.tsasaki.marketfinder.service;
 
 import com.tsasaki.marketfinder.client.GitHubApiClient;
-import com.tsasaki.marketfinder.dto.GitHubIssueDto;
-import com.tsasaki.marketfinder.dto.GitHubRepositoryDto;
-import com.tsasaki.marketfinder.dto.IssueKeywordDto;
-import com.tsasaki.marketfinder.dto.IssueSummaryDto;
-import com.tsasaki.marketfinder.dto.SearchResponseDto;
-import com.tsasaki.marketfinder.dto.SearchSummaryDto;
-import com.tsasaki.marketfinder.dto.TrendAnalysisDto;
-import com.tsasaki.marketfinder.dto.AiSummaryDto;
+import com.tsasaki.marketfinder.dto.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,6 +25,7 @@ public class SearchService {
     private final TrendAnalysisService trendAnalysisService;
     private final IssueKeywordAnalysisService issueKeywordAnalysisService;
     private final AiSummaryService aiSummaryService;
+    private final OpportunityScoreService opportunityScoreService;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
@@ -39,7 +33,8 @@ public class SearchService {
             IssueSummaryService issueSummaryService,
             TrendAnalysisService trendAnalysisService,
             IssueKeywordAnalysisService issueKeywordAnalysisService,
-            AiSummaryService aiSummaryService
+            AiSummaryService aiSummaryService,
+            OpportunityScoreService opportunityScoreService
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
@@ -47,6 +42,7 @@ public class SearchService {
         this.trendAnalysisService = trendAnalysisService;
         this.issueKeywordAnalysisService = issueKeywordAnalysisService;
         this.aiSummaryService = aiSummaryService;
+        this.opportunityScoreService = opportunityScoreService;
     }
 
     /**
@@ -71,7 +67,8 @@ public class SearchService {
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
                     List.of(),
-                    AiSummaryDto.unavailable()
+                    AiSummaryDto.unavailable(),
+                    List.of()
             );
         }
 
@@ -85,7 +82,8 @@ public class SearchService {
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
                     List.of(),
-                    AiSummaryDto.unavailable()
+                    AiSummaryDto.unavailable(),
+                    List.of()
             );
         }
 
@@ -120,8 +118,12 @@ public class SearchService {
                     issueSummary,
                     trendAnalysis,
                     issueKeywords,
-                    AiSummaryDto.unavailable()
+                    AiSummaryDto.unavailable(),
+                    List.of()
             );
+
+            List<OpportunityDto> opportunities =
+                    opportunityScoreService.calculate(sortedRepositories, trendAnalysis, issueSummary);
 
             AiSummaryDto aiSummary = aiSummaryService.generate(response);
 
@@ -134,7 +136,8 @@ public class SearchService {
                     issueSummary,
                     trendAnalysis,
                     issueKeywords,
-                    aiSummary
+                    aiSummary,
+                    opportunities
             );
 
         } catch (IllegalStateException e) {
@@ -147,7 +150,8 @@ public class SearchService {
                     emptyIssueSummary(),
                     emptyTrendAnalysis(),
                     List.of(),
-                    AiSummaryDto.unavailable()
+                    AiSummaryDto.unavailable(),
+                    List.of()
             );
         }
     }

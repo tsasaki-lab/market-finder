@@ -27,6 +27,7 @@ public class SearchService {
     private final AiSummaryService aiSummaryService;
     private final OpportunityScoreService opportunityScoreService;
     private final SaasIdeaGeneratorService saasIdeaGeneratorService;
+    private final SearchResponseFactory searchResponseFactory;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
@@ -36,7 +37,8 @@ public class SearchService {
             IssueKeywordAnalysisService issueKeywordAnalysisService,
             AiSummaryService aiSummaryService,
             OpportunityScoreService opportunityScoreService,
-            SaasIdeaGeneratorService saasIdeaGeneratorService
+            SaasIdeaGeneratorService saasIdeaGeneratorService,
+            SearchResponseFactory searchResponseFactory
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
@@ -46,6 +48,7 @@ public class SearchService {
         this.aiSummaryService = aiSummaryService;
         this.opportunityScoreService = opportunityScoreService;
         this.saasIdeaGeneratorService = saasIdeaGeneratorService;
+        this.searchResponseFactory = searchResponseFactory;
     }
 
     /**
@@ -61,35 +64,11 @@ public class SearchService {
         String normalizedLanguage = language == null ? "" : language.trim();
 
         if (normalizedKeyword.isBlank()) {
-            return new SearchResponseDto(
-                    List.of(),
-                    List.of(),
-                    null,
-                    "検索キーワードを入力してください。",
-                    emptySearchSummary(),
-                    emptyIssueSummary(),
-                    emptyTrendAnalysis(),
-                    List.of(),
-                    AiSummaryDto.unavailable(),
-                    List.of(),
-                    List.of()
-            );
+            return searchResponseFactory.validationError("検索キーワードを入力してください。");
         }
 
         if (normalizedKeyword.length() > MAX_KEYWORD_LENGTH) {
-            return new SearchResponseDto(
-                    List.of(),
-                    List.of(),
-                    null,
-                    "検索キーワードは50文字以内で入力してください。",
-                    emptySearchSummary(),
-                    emptyIssueSummary(),
-                    emptyTrendAnalysis(),
-                    List.of(),
-                    AiSummaryDto.unavailable(),
-                    List.of(),
-                    List.of()
-            );
+            return searchResponseFactory.validationError("検索キーワードは50文字以内で入力してください。");
         }
 
         try {
@@ -151,18 +130,8 @@ public class SearchService {
             );
 
         } catch (IllegalStateException e) {
-            return new SearchResponseDto(
-                    List.of(),
-                    List.of(),
-                    "検索中にエラーが発生しました。時間をおいて再度お試しください。",
-                    null,
-                    emptySearchSummary(),
-                    emptyIssueSummary(),
-                    emptyTrendAnalysis(),
-                    List.of(),
-                    AiSummaryDto.unavailable(),
-                    List.of(),
-                    List.of()
+            return searchResponseFactory.systemError(
+                    "検索中にエラーが発生しました。時間をおいて再度お試しください。"
             );
         }
     }
@@ -199,15 +168,4 @@ public class SearchService {
         return results;
     }
 
-    private SearchSummaryDto emptySearchSummary() {
-        return new SearchSummaryDto(0, 0.0, 0, 0);
-    }
-
-    private IssueSummaryDto emptyIssueSummary() {
-        return new IssueSummaryDto(0, 0, 0, 0);
-    }
-
-    private TrendAnalysisDto emptyTrendAnalysis() {
-        return new TrendAnalysisDto(0.0, 0, 0, 0, 0, 0, 0, 0, "N/A");
-    }
 }

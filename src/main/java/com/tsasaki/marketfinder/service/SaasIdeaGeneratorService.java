@@ -49,8 +49,14 @@ public class SaasIdeaGeneratorService {
                         .limit(3)
                         .toList();
 
-        String prompt = buildPrompt(topOpportunities);
-        String content = openAiSummaryClient.generate(prompt);
+        String content;
+
+        try {
+            String prompt = buildPrompt(topOpportunities);
+            content = openAiSummaryClient.generate(prompt);
+        } catch (Exception e) {
+            return List.of();
+        }
 
         if (content == null || content.isBlank()) {
             return List.of();

@@ -26,6 +26,7 @@ public class SearchService {
     private final IssueKeywordAnalysisService issueKeywordAnalysisService;
     private final AiSummaryService aiSummaryService;
     private final OpportunityScoreService opportunityScoreService;
+    private final SaasIdeaGeneratorService saasIdeaGeneratorService;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
@@ -34,7 +35,8 @@ public class SearchService {
             TrendAnalysisService trendAnalysisService,
             IssueKeywordAnalysisService issueKeywordAnalysisService,
             AiSummaryService aiSummaryService,
-            OpportunityScoreService opportunityScoreService
+            OpportunityScoreService opportunityScoreService,
+            SaasIdeaGeneratorService saasIdeaGeneratorService
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
@@ -43,6 +45,7 @@ public class SearchService {
         this.issueKeywordAnalysisService = issueKeywordAnalysisService;
         this.aiSummaryService = aiSummaryService;
         this.opportunityScoreService = opportunityScoreService;
+        this.saasIdeaGeneratorService = saasIdeaGeneratorService;
     }
 
     /**
@@ -68,6 +71,7 @@ public class SearchService {
                     emptyTrendAnalysis(),
                     List.of(),
                     AiSummaryDto.unavailable(),
+                    List.of(),
                     List.of()
             );
         }
@@ -83,6 +87,7 @@ public class SearchService {
                     emptyTrendAnalysis(),
                     List.of(),
                     AiSummaryDto.unavailable(),
+                    List.of(),
                     List.of()
             );
         }
@@ -109,6 +114,9 @@ public class SearchService {
             List<IssueKeywordDto> issueKeywords =
                     issueKeywordAnalysisService.analyze(issues);
 
+            List<OpportunityDto> opportunities =
+                    opportunityScoreService.calculate(sortedRepositories, trendAnalysis, issueSummary);
+
             SearchResponseDto response = new SearchResponseDto(
                     sortedRepositories,
                     issues,
@@ -119,13 +127,14 @@ public class SearchService {
                     trendAnalysis,
                     issueKeywords,
                     AiSummaryDto.unavailable(),
+                    opportunities,
                     List.of()
             );
 
-            List<OpportunityDto> opportunities =
-                    opportunityScoreService.calculate(sortedRepositories, trendAnalysis, issueSummary);
-
             AiSummaryDto aiSummary = aiSummaryService.generate(response);
+
+            List<SaasIdeaDto> saasIdeas =
+                    saasIdeaGeneratorService.generate(opportunities);
 
             return new SearchResponseDto(
                     sortedRepositories,
@@ -137,7 +146,8 @@ public class SearchService {
                     trendAnalysis,
                     issueKeywords,
                     aiSummary,
-                    opportunities
+                    opportunities,
+                    saasIdeas
             );
 
         } catch (IllegalStateException e) {
@@ -151,6 +161,7 @@ public class SearchService {
                     emptyTrendAnalysis(),
                     List.of(),
                     AiSummaryDto.unavailable(),
+                    List.of(),
                     List.of()
             );
         }

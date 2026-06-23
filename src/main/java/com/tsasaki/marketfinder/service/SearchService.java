@@ -4,6 +4,7 @@ import com.tsasaki.marketfinder.client.GitHubApiClient;
 import com.tsasaki.marketfinder.dto.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.List;
 
 /**
@@ -17,8 +18,6 @@ import java.util.List;
 @Service
 public class SearchService {
 
-    private static final int MAX_KEYWORD_LENGTH = 50;
-
     private final GitHubApiClient gitHubApiClient;
     private final SearchSummaryService searchSummaryService;
     private final IssueSummaryService issueSummaryService;
@@ -28,6 +27,7 @@ public class SearchService {
     private final OpportunityScoreService opportunityScoreService;
     private final SaasIdeaGeneratorService saasIdeaGeneratorService;
     private final SearchResponseFactory searchResponseFactory;
+    private final SearchRequestValidator searchRequestValidator;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
@@ -38,7 +38,8 @@ public class SearchService {
             AiSummaryService aiSummaryService,
             OpportunityScoreService opportunityScoreService,
             SaasIdeaGeneratorService saasIdeaGeneratorService,
-            SearchResponseFactory searchResponseFactory
+            SearchResponseFactory searchResponseFactory,
+            SearchRequestValidator searchRequestValidator
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
@@ -49,6 +50,7 @@ public class SearchService {
         this.opportunityScoreService = opportunityScoreService;
         this.saasIdeaGeneratorService = saasIdeaGeneratorService;
         this.searchResponseFactory = searchResponseFactory;
+        this.searchRequestValidator = searchRequestValidator;
     }
 
     /**
@@ -63,12 +65,11 @@ public class SearchService {
         String normalizedKeyword = keyword == null ? "" : keyword.trim();
         String normalizedLanguage = language == null ? "" : language.trim();
 
-        if (normalizedKeyword.isBlank()) {
-            return searchResponseFactory.validationError("検索キーワードを入力してください。");
-        }
+        Optional<String> validationError =
+                searchRequestValidator.validateKeyword(normalizedKeyword);
 
-        if (normalizedKeyword.length() > MAX_KEYWORD_LENGTH) {
-            return searchResponseFactory.validationError("検索キーワードは50文字以内で入力してください。");
+        if (validationError.isPresent()) {
+            return searchResponseFactory.validationError(validationError.get());
         }
 
         try {

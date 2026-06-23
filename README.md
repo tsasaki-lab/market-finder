@@ -115,6 +115,27 @@ AI分析では以下の情報を活用しています。
 
 ---
 
+### Opportunity Score
+
+Market Finder独自の指標をもとに、
+SaaS化しやすい市場機会をスコア化します。
+
+表示内容
+
+* Opportunity Score
+* Opportunity Level
+* SaaS Opportunity Ranking
+
+Opportunity Scoreは以下の情報を利用して算出します。
+
+* Market Score
+* Demand Score
+* Pain Level Score
+* Activity Score
+* Open Issue Ratio
+
+---
+
 ## Tech Stack
 
 * Java 21
@@ -161,6 +182,14 @@ http://localhost:8080
 
 ## Releases
 
+### v0.5.0
+
+* Opportunity Score追加
+* SaaS Opportunity Ranking追加
+* Market Scoreを利用した市場機会評価
+* Trend Analysisを利用した機会分析
+* Issue分析を利用した需要評価
+
 ### v0.4.1
 
 * AI分析品質向上
@@ -190,15 +219,15 @@ http://localhost:8080
 
 ## Roadmap
 
-### v0.5.0
-
-* Opportunity Score
-* SaaS機会ランキング
-* 市場比較分析
-
 ### v0.6.0
 
 * AI Opportunity Ranking
 * 市場成長性分析
 * GitHub競合分析
 * SaaSアイデア自動生成
+
+### v0.7.0
+
+* 市場比較分析
+* カテゴリ別ランキング
+* トレンド履歴分析

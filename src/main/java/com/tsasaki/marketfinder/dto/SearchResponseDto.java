@@ -22,6 +22,7 @@ import java.util.List;
  * @param issueKeywords     Issue頻出キーワード分析結果
  * @param aiSummary         AIによる市場分析結果
  * @param opportunities     SaaS機会分析結果
+ * @param saasIdeas         AIが生成したSaaSアイデア一覧
  */
 public record SearchResponseDto(
         List<GitHubRepositoryDto> results,
@@ -33,6 +34,7 @@ public record SearchResponseDto(
         TrendAnalysisDto trendAnalysis,
         List<IssueKeywordDto> issueKeywords,
         AiSummaryDto aiSummary,
-        List<OpportunityDto> opportunities
+        List<OpportunityDto> opportunities,
+        List<SaasIdeaDto> saasIdeas
 ) {
 }

@@ -136,6 +136,30 @@ Opportunity Scoreは以下の情報を利用して算出します。
 
 ---
 
+### AI SaaS Idea Generator
+
+Opportunity Score上位の候補をもとに、
+AIが具体的なSaaSアイデアを生成します。
+
+表示内容
+
+* SaaSアイデア名
+* ターゲットユーザー
+* 解決する課題
+* 主要機能
+* 収益化案
+
+AI生成では以下の情報を活用しています。
+
+* Opportunity Score
+* Opportunity Level
+* SaaS Opportunity Ranking
+* Market Score
+* Trend Analysis
+* Issue Analysis
+
+---
+
 ## Tech Stack
 
 * Java 21
@@ -182,6 +206,15 @@ http://localhost:8080
 
 ## Releases
 
+### v0.5.1
+
+* AI SaaS Idea Generator追加
+* Opportunity Score上位候補からSaaSアイデアを生成
+* ターゲットユーザー自動生成
+* 解決する課題自動生成
+* 主要機能自動生成
+* 収益化案自動生成
+
 ### v0.5.0
 
 * Opportunity Score追加
@@ -224,7 +257,6 @@ http://localhost:8080
 * AI Opportunity Ranking
 * 市場成長性分析
 * GitHub競合分析
-* SaaSアイデア自動生成
 
 ### v0.7.0
 

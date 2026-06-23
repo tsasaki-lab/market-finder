@@ -40,8 +40,14 @@ public class AiSummaryService {
             return AiSummaryDto.unavailable();
         }
 
-        String prompt = buildPrompt(response);
-        String content = openAiSummaryClient.generate(prompt);
+        String content;
+
+        try {
+            String prompt = buildPrompt(response);
+            content = openAiSummaryClient.generate(prompt);
+        } catch (Exception e) {
+            return AiSummaryDto.unavailable();
+        }
 
         if (content == null || content.isBlank()) {
             return AiSummaryDto.unavailable();
@@ -74,7 +80,6 @@ public class AiSummaryService {
             );
         }
     }
-
     /**
      * OpenAI APIへ渡す市場分析用プロンプトを生成します。
      *

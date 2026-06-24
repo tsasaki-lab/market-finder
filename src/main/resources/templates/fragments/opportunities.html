@@ -1,0 +1,65 @@
+<div th:fragment="opportunitiesBlock"
+     th:if="${opportunities != null and !#lists.isEmpty(opportunities)}"
+     class="card shadow-sm mb-4 border-success">
+
+    <div class="card-header bg-success text-white">
+        Top SaaS Opportunities
+    </div>
+
+    <div class="card-body">
+        <p class="text-muted mb-4">
+            Market Score、Trend Analysis、Issue状況をもとに、SaaS化しやすい候補をランキング表示しています。
+        </p>
+
+        <div class="list-group">
+            <div class="list-group-item"
+                 th:each="opportunity, stat : ${opportunities}">
+
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                        <h3 class="h6 mb-2">
+                            <span th:text="${stat.count}">1</span>.
+                            <a th:href="${opportunity.repositoryUrl}"
+                               th:text="${opportunity.repositoryName}"
+                               target="_blank"
+                               class="text-decoration-none">
+                                repository-name
+                            </a>
+                        </h3>
+
+                        <p class="mb-2" th:text="${opportunity.reason}">
+                            SaaS化候補として有望です。
+                        </p>
+
+                        <span class="badge bg-success"
+                              th:if="${opportunity.opportunityLevel == 'High'}">
+                            High
+                        </span>
+
+                        <span class="badge bg-warning text-dark"
+                              th:if="${opportunity.opportunityLevel == 'Medium'}">
+                            Medium
+                        </span>
+
+                        <span class="badge bg-secondary"
+                              th:if="${opportunity.opportunityLevel == 'Low'}">
+                            Low
+                        </span>
+                    </div>
+
+                    <div class="text-end">
+                        <div class="fs-4 fw-bold">
+                            <span th:text="${#numbers.formatDecimal(opportunity.opportunityScore, 1, 1)}">
+                                85.0
+                            </span>
+                        </div>
+                        <div class="small text-muted">
+                            Opportunity Score
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

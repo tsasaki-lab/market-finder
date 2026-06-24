@@ -4,6 +4,7 @@ import com.tsasaki.marketfinder.client.GitHubApiClient;
 import com.tsasaki.marketfinder.dto.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.List;
 
 /**
@@ -17,8 +18,6 @@ import java.util.List;
 @Service
 public class SearchService {
 
-    private static final int MAX_KEYWORD_LENGTH = 50;
-
     private final GitHubApiClient gitHubApiClient;
     private final SearchSummaryService searchSummaryService;
     private final IssueSummaryService issueSummaryService;
@@ -27,6 +26,9 @@ public class SearchService {
     private final AiSummaryService aiSummaryService;
     private final OpportunityScoreService opportunityScoreService;
     private final SaasIdeaGeneratorService saasIdeaGeneratorService;
+    private final SearchResponseFactory searchResponseFactory;
+    private final SearchRequestValidator searchRequestValidator;
+    private final RepositorySortService repositorySortService;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
@@ -36,7 +38,10 @@ public class SearchService {
             IssueKeywordAnalysisService issueKeywordAnalysisService,
             AiSummaryService aiSummaryService,
             OpportunityScoreService opportunityScoreService,
-            SaasIdeaGeneratorService saasIdeaGeneratorService
+            SaasIdeaGeneratorService saasIdeaGeneratorService,
+            SearchResponseFactory searchResponseFactory,
+            SearchRequestValidator searchRequestValidator,
+            RepositorySortService repositorySortService
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
@@ -46,6 +51,9 @@ public class SearchService {
         this.aiSummaryService = aiSummaryService;
         this.opportunityScoreService = opportunityScoreService;
         this.saasIdeaGeneratorService = saasIdeaGeneratorService;
+        this.searchResponseFactory = searchResponseFactory;
+        this.searchRequestValidator = searchRequestValidator;
+        this.repositorySortService = repositorySortService;
     }
 
     /**
@@ -60,36 +68,11 @@ public class SearchService {
         String normalizedKeyword = keyword == null ? "" : keyword.trim();
         String normalizedLanguage = language == null ? "" : language.trim();
 
-        if (normalizedKeyword.isBlank()) {
-            return new SearchResponseDto(
-                    List.of(),
-                    List.of(),
-                    null,
-                    "検索キーワードを入力してください。",
-                    emptySearchSummary(),
-                    emptyIssueSummary(),
-                    emptyTrendAnalysis(),
-                    List.of(),
-                    AiSummaryDto.unavailable(),
-                    List.of(),
-                    List.of()
-            );
-        }
+        Optional<String> validationError =
+                searchRequestValidator.validateKeyword(normalizedKeyword);
 
-        if (normalizedKeyword.length() > MAX_KEYWORD_LENGTH) {
-            return new SearchResponseDto(
-                    List.of(),
-                    List.of(),
-                    null,
-                    "検索キーワードは50文字以内で入力してください。",
-                    emptySearchSummary(),
-                    emptyIssueSummary(),
-                    emptyTrendAnalysis(),
-                    List.of(),
-                    AiSummaryDto.unavailable(),
-                    List.of(),
-                    List.of()
-            );
+        if (validationError.isPresent()) {
+            return searchResponseFactory.validationError(validationError.get());
         }
 
         try {
@@ -97,7 +80,7 @@ public class SearchService {
                     gitHubApiClient.searchRepositories(normalizedKeyword, normalizedLanguage);
 
             List<GitHubRepositoryDto> sortedRepositories =
-                    sortResults(repositories, sort);
+                    repositorySortService.sort(repositories, sort);
 
             List<GitHubIssueDto> issues =
                     gitHubApiClient.searchIssues(normalizedKeyword, normalizedLanguage);
@@ -151,63 +134,10 @@ public class SearchService {
             );
 
         } catch (IllegalStateException e) {
-            return new SearchResponseDto(
-                    List.of(),
-                    List.of(),
-                    "検索中にエラーが発生しました。時間をおいて再度お試しください。",
-                    null,
-                    emptySearchSummary(),
-                    emptyIssueSummary(),
-                    emptyTrendAnalysis(),
-                    List.of(),
-                    AiSummaryDto.unavailable(),
-                    List.of(),
-                    List.of()
+            return searchResponseFactory.systemError(
+                    "検索中にエラーが発生しました。時間をおいて再度お試しください。"
             );
         }
     }
 
-    /**
-     * 指定された条件でリポジトリ検索結果を並び替えます。
-     *
-     * @param results リポジトリ検索結果
-     * @param sort    並び替え条件
-     * @return 並び替え後のリポジトリ検索結果
-     */
-    private List<GitHubRepositoryDto> sortResults(
-            List<GitHubRepositoryDto> results,
-            String sort
-    ) {
-        if (sort == null || sort.isBlank() || sort.equals("stars")) {
-            return results.stream()
-                    .sorted((a, b) -> Integer.compare(b.stars(), a.stars()))
-                    .toList();
-        }
-
-        if (sort.equals("marketScore")) {
-            return results.stream()
-                    .sorted((a, b) -> Integer.compare(b.marketScore(), a.marketScore()))
-                    .toList();
-        }
-
-        if (sort.equals("updated")) {
-            return results.stream()
-                    .sorted((a, b) -> b.updatedAt().compareTo(a.updatedAt()))
-                    .toList();
-        }
-
-        return results;
-    }
-
-    private SearchSummaryDto emptySearchSummary() {
-        return new SearchSummaryDto(0, 0.0, 0, 0);
-    }
-
-    private IssueSummaryDto emptyIssueSummary() {
-        return new IssueSummaryDto(0, 0, 0, 0);
-    }
-
-    private TrendAnalysisDto emptyTrendAnalysis() {
-        return new TrendAnalysisDto(0.0, 0, 0, 0, 0, 0, 0, 0, "N/A");
-    }
 }

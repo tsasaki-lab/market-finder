@@ -1,0 +1,26 @@
+<div th:fragment="aiSummaryBlock"
+     th:if="${aiSummary != null and aiSummary.available}"
+     class="card shadow-sm mb-4 border-primary">
+
+    <div class="card-header bg-primary text-white">
+        AI Summary
+    </div>
+
+    <div class="card-body">
+
+        <h5 class="card-title">市場インサイト</h5>
+        <p th:text="${aiSummary.marketSummary}"></p>
+
+        <hr>
+
+        <h6>開発者課題</h6>
+        <p th:text="${aiSummary.developerPain}"></p>
+
+        <h6>技術トレンド</h6>
+        <p th:text="${aiSummary.technologyTrend}"></p>
+
+        <h6>SaaS機会</h6>
+        <p th:text="${aiSummary.saasOpportunity}"></p>
+
+    </div>
+</div>

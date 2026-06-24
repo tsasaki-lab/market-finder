@@ -206,6 +206,17 @@ http://localhost:8080
 
 ## Releases
 
+### v0.5.2
+
+* SearchServiceの責務整理
+* SearchResponseFactoryによるレスポンス生成処理の共通化
+* SearchRequestValidatorによる入力チェック処理の分離
+* RepositorySortServiceによる並び替え処理の分離
+* AI Summary Prompt Builderの分離
+* SaaS Idea Prompt Builderの分離
+* search.htmlのThymeleaf Fragment化
+* 保守性向上
+
 ### v0.5.1
 
 * AI SaaS Idea Generator追加

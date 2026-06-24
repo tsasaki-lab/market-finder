@@ -1,0 +1,46 @@
+<div th:fragment="saasIdeasBlock"
+     th:if="${saasIdeas != null and !#lists.isEmpty(saasIdeas)}"
+     class="card shadow-sm mb-4 border-info">
+
+    <div class="card-header bg-info text-dark">
+        AI SaaS Ideas
+    </div>
+
+    <div class="card-body">
+        <p class="text-muted mb-4">
+            Opportunity Score上位の候補をもとに、AIがSaaSアイデアを生成しています。
+        </p>
+
+        <div class="row g-3">
+            <div class="col-md-4" th:each="idea : ${saasIdeas}">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h6" th:text="${idea.ideaName}">
+                            SaaS Idea
+                        </h3>
+
+                        <p class="small mb-2">
+                            <strong>ターゲット:</strong>
+                            <span th:text="${idea.targetUser}"></span>
+                        </p>
+
+                        <p class="small mb-2">
+                            <strong>課題:</strong>
+                            <span th:text="${idea.problem}"></span>
+                        </p>
+
+                        <p class="small mb-2">
+                            <strong>主要機能:</strong>
+                            <span th:text="${idea.coreFeature}"></span>
+                        </p>
+
+                        <p class="small mb-0">
+                            <strong>収益化:</strong>
+                            <span th:text="${idea.monetization}"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

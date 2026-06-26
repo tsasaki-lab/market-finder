@@ -115,6 +115,29 @@ AI分析では以下の情報を活用しています。
 
 ---
 
+### GitHub Competition Analysis
+
+GitHub Repositoryの競合状況を分析します。
+
+検索結果をもとに、市場が成熟しているか、新規参入しやすいかを可視化します。
+
+表示内容
+
+* Competition Score
+* Competition Level
+* Market Maturity
+* Entry Difficulty
+* Major Competitors
+* Differentiation Hints
+
+Competition Analysisでは以下の情報を利用して分析します。
+
+* Stars
+* Repository Count
+* Market Score
+
+---
+
 ### Opportunity Score
 
 Market Finder独自の指標をもとに、
@@ -206,6 +229,17 @@ http://localhost:8080
 
 ## Releases
 
+### v0.6.0
+
+* GitHub Competition Analysis追加
+* Competition Score追加
+* Competition Level追加
+* Market Maturity追加
+* Entry Difficulty追加
+* Major Competitors表示追加
+* Differentiation Hints追加
+* Competition Analysis画面追加
+
 ### v0.5.2
 
 * SearchServiceの責務整理
@@ -263,14 +297,10 @@ http://localhost:8080
 
 ## Roadmap
 
-### v0.6.0
+### v0.7.0
 
 * AI Opportunity Ranking
 * 市場成長性分析
-* GitHub競合分析
-
-### v0.7.0
-
 * 市場比較分析
 * カテゴリ別ランキング
 * トレンド履歴分析

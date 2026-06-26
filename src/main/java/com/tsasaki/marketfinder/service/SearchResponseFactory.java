@@ -1,26 +1,26 @@
 package com.tsasaki.marketfinder.service;
 
-import com.tsasaki.marketfinder.dto.*;
+import com.tsasaki.marketfinder.dto.AiSummaryDto;
+import com.tsasaki.marketfinder.dto.CompetitionAnalysisDto;
+import com.tsasaki.marketfinder.dto.IssueSummaryDto;
+import com.tsasaki.marketfinder.dto.SearchResponseDto;
+import com.tsasaki.marketfinder.dto.SearchSummaryDto;
+import com.tsasaki.marketfinder.dto.TrendAnalysisDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
- * 検索レスポンス生成を担当するファクトリです。
- *
- * <p>
- * 入力エラー、システムエラー、空の分析結果など、
- * SearchResponseDto の共通生成処理を集約します。
- * </p>
+ * 検索レスポンスDTOを生成するFactoryです。
  */
 @Component
 public class SearchResponseFactory {
 
     /**
-     * 入力チェックエラー用のレスポンスを生成します。
+     * 入力チェックエラー時の検索レスポンスを生成します。
      *
      * @param validationMessage 入力チェックエラーメッセージ
-     * @return 入力チェックエラー用レスポンス
+     * @return 検索レスポンスDTO
      */
     public SearchResponseDto validationError(String validationMessage) {
         return new SearchResponseDto(
@@ -33,16 +33,17 @@ public class SearchResponseFactory {
                 emptyTrendAnalysis(),
                 List.of(),
                 AiSummaryDto.unavailable(),
+                CompetitionAnalysisDto.empty(),
                 List.of(),
                 List.of()
         );
     }
 
     /**
-     * システムエラー用のレスポンスを生成します。
+     * システムエラー時の検索レスポンスを生成します。
      *
      * @param errorMessage システムエラーメッセージ
-     * @return システムエラー用レスポンス
+     * @return 検索レスポンスDTO
      */
     public SearchResponseDto systemError(String errorMessage) {
         return new SearchResponseDto(
@@ -55,6 +56,7 @@ public class SearchResponseFactory {
                 emptyTrendAnalysis(),
                 List.of(),
                 AiSummaryDto.unavailable(),
+                CompetitionAnalysisDto.empty(),
                 List.of(),
                 List.of()
         );

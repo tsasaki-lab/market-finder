@@ -4,15 +4,15 @@ import com.tsasaki.marketfinder.client.GitHubApiClient;
 import com.tsasaki.marketfinder.dto.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 検索処理全体を制御するサービスです。
  *
  * <p>
  * 入力チェック、GitHub API呼び出し、並び替え、サマリー生成、
- * トレンド分析、Issueキーワード分析をまとめて実行します。
+ * トレンド分析、Issueキーワード分析、競合分析をまとめて実行します。
  * </p>
  */
 @Service
@@ -29,6 +29,7 @@ public class SearchService {
     private final SearchResponseFactory searchResponseFactory;
     private final SearchRequestValidator searchRequestValidator;
     private final RepositorySortService repositorySortService;
+    private final CompetitionAnalysisService competitionAnalysisService;
 
     public SearchService(
             GitHubApiClient gitHubApiClient,
@@ -41,7 +42,8 @@ public class SearchService {
             SaasIdeaGeneratorService saasIdeaGeneratorService,
             SearchResponseFactory searchResponseFactory,
             SearchRequestValidator searchRequestValidator,
-            RepositorySortService repositorySortService
+            RepositorySortService repositorySortService,
+            CompetitionAnalysisService competitionAnalysisService
     ) {
         this.gitHubApiClient = gitHubApiClient;
         this.searchSummaryService = searchSummaryService;
@@ -54,6 +56,7 @@ public class SearchService {
         this.searchResponseFactory = searchResponseFactory;
         this.searchRequestValidator = searchRequestValidator;
         this.repositorySortService = repositorySortService;
+        this.competitionAnalysisService = competitionAnalysisService;
     }
 
     /**
@@ -97,6 +100,9 @@ public class SearchService {
             List<IssueKeywordDto> issueKeywords =
                     issueKeywordAnalysisService.analyze(issues);
 
+            CompetitionAnalysisDto competitionAnalysis =
+                    competitionAnalysisService.analyze(sortedRepositories);
+
             List<OpportunityDto> opportunities =
                     opportunityScoreService.calculate(sortedRepositories, trendAnalysis, issueSummary);
 
@@ -110,6 +116,7 @@ public class SearchService {
                     trendAnalysis,
                     issueKeywords,
                     AiSummaryDto.unavailable(),
+                    competitionAnalysis,
                     opportunities,
                     List.of()
             );
@@ -129,6 +136,7 @@ public class SearchService {
                     trendAnalysis,
                     issueKeywords,
                     aiSummary,
+                    competitionAnalysis,
                     opportunities,
                     saasIdeas
             );

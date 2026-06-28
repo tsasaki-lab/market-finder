@@ -6,7 +6,7 @@ package com.tsasaki.marketfinder.dto;
  * @param title            ランキング対象のタイトル
  * @param priority         優先度
  * @param rankingScore     ランキングスコア
- * @param opportunityScore 機会スコア
+ * @param opportunityScore SaaS化機会スコア
  * @param competitionScore 競合スコア
  * @param reason           優先度判定の理由
  */
@@ -14,7 +14,7 @@ public record OpportunityRankingDto(
         String title,
         String priority,
         int rankingScore,
-        int opportunityScore,
+        double opportunityScore,
         int competitionScore,
         String reason
 ) {

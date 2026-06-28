@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * <p>
  * 入力チェック、GitHub API呼び出し、並び替え、サマリー生成、
- * トレンド分析、Issueキーワード分析、競合分析をまとめて実行します。
+ * トレンド分析、Issueキーワード分析、競合分析、SaaS機会の優先度ランキングをまとめて実行します。
  * </p>
  */
 @Service
@@ -25,6 +25,7 @@ public class SearchService {
     private final IssueKeywordAnalysisService issueKeywordAnalysisService;
     private final AiSummaryService aiSummaryService;
     private final OpportunityScoreService opportunityScoreService;
+    private final OpportunityRankingService opportunityRankingService;
     private final SaasIdeaGeneratorService saasIdeaGeneratorService;
     private final SearchResponseFactory searchResponseFactory;
     private final SearchRequestValidator searchRequestValidator;
@@ -39,6 +40,7 @@ public class SearchService {
             IssueKeywordAnalysisService issueKeywordAnalysisService,
             AiSummaryService aiSummaryService,
             OpportunityScoreService opportunityScoreService,
+            OpportunityRankingService opportunityRankingService,
             SaasIdeaGeneratorService saasIdeaGeneratorService,
             SearchResponseFactory searchResponseFactory,
             SearchRequestValidator searchRequestValidator,
@@ -52,6 +54,7 @@ public class SearchService {
         this.issueKeywordAnalysisService = issueKeywordAnalysisService;
         this.aiSummaryService = aiSummaryService;
         this.opportunityScoreService = opportunityScoreService;
+        this.opportunityRankingService = opportunityRankingService;
         this.saasIdeaGeneratorService = saasIdeaGeneratorService;
         this.searchResponseFactory = searchResponseFactory;
         this.searchRequestValidator = searchRequestValidator;
@@ -106,6 +109,9 @@ public class SearchService {
             List<OpportunityDto> opportunities =
                     opportunityScoreService.calculate(sortedRepositories, trendAnalysis, issueSummary);
 
+            List<OpportunityRankingDto> opportunityRankings =
+                    opportunityRankingService.rank(opportunities, competitionAnalysis);
+
             SearchResponseDto response = new SearchResponseDto(
                     sortedRepositories,
                     issues,
@@ -118,6 +124,7 @@ public class SearchService {
                     AiSummaryDto.unavailable(),
                     competitionAnalysis,
                     opportunities,
+                    opportunityRankings,
                     List.of()
             );
 
@@ -138,6 +145,7 @@ public class SearchService {
                     aiSummary,
                     competitionAnalysis,
                     opportunities,
+                    opportunityRankings,
                     saasIdeas
             );
 

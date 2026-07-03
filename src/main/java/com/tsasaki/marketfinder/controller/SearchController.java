@@ -45,6 +45,7 @@ public class SearchController {
         model.addAttribute("issueKeywords", response.issueKeywords());
         model.addAttribute("aiSummary", response.aiSummary());
         model.addAttribute("competitionAnalysis", response.competitionAnalysis());
+        model.addAttribute("opportunityRankings", response.opportunityRankings());
         model.addAttribute("opportunities", response.opportunities());
         model.addAttribute("saasIdeas", response.saasIdeas());
 

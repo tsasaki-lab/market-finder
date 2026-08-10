@@ -16,6 +16,7 @@ import java.util.List;
  * @param aiSummary           AIによる市場分析結果
  * @param competitionAnalysis GitHub競合分析結果
  * @param opportunities       SaaS機会ランキング
+ * @param opportunityRankings SaaS機会の優先度ランキング
  * @param saasIdeas           AIが生成したSaaSアイデア一覧
  */
 public record SearchResponseDto(
@@ -30,6 +31,7 @@ public record SearchResponseDto(
         AiSummaryDto aiSummary,
         CompetitionAnalysisDto competitionAnalysis,
         List<OpportunityDto> opportunities,
+        List<OpportunityRankingDto> opportunityRankings,
         List<SaasIdeaDto> saasIdeas
 ) {
 }

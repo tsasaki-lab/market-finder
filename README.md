@@ -159,6 +159,20 @@ Opportunity Scoreは以下の情報を利用して算出します。
 
 ---
 
+### Opportunity Ranking
+
+Opportunity Score と Competition Analysis を組み合わせて、SaaS機会の優先度をランキング表示します。
+
+表示内容
+
+* Priority
+* Ranking Score
+* Opportunity Score
+* Competition Score
+* Reason
+
+---
+
 ### AI SaaS Idea Generator
 
 Opportunity Score上位の候補をもとに、
@@ -229,6 +243,14 @@ http://localhost:8080
 
 ## Releases
 
+### v0.7.0
+
+* Opportunity Ranking追加
+* Ranking Score追加
+* Priority表示追加
+* Opportunity ScoreとCompetition Scoreを組み合わせた優先度判定を追加
+* Opportunity Ranking画面追加
+
 ### v0.6.0
 
 * GitHub Competition Analysis追加
@@ -297,9 +319,14 @@ http://localhost:8080
 
 ## Roadmap
 
-### v0.7.0
+### v0.7.1
 
-* AI Opportunity Ranking
+* READMEの分析フロー整理
+* 初見ユーザー向け説明改善
+* 画面構成・分析流れの可視化
+
+### v0.8.0
+
 * 市場成長性分析
 * 市場比較分析
 * カテゴリ別ランキング

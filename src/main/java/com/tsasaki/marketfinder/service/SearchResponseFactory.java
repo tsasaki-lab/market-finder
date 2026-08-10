@@ -35,6 +35,7 @@ public class SearchResponseFactory {
                 AiSummaryDto.unavailable(),
                 CompetitionAnalysisDto.empty(),
                 List.of(),
+                List.of(),
                 List.of()
         );
     }
@@ -57,6 +58,7 @@ public class SearchResponseFactory {
                 List.of(),
                 AiSummaryDto.unavailable(),
                 CompetitionAnalysisDto.empty(),
+                List.of(),
                 List.of(),
                 List.of()
         );
